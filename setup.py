@@ -4,7 +4,7 @@ with open('README.md') as readme_file:
     README = readme_file.read()
 
 setup_args = dict(
-    name='pycvr',
+    name='pycreg',
     version='0.0.2',
     description='A Python Package for Convex Regression',
     long_description_content_type="text/markdown",

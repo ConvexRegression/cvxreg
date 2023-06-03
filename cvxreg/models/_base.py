@@ -58,9 +58,10 @@ class CR(CRModel, CNLS.CNLS):
         self.positive = positive
 
         if self.shape == Convex:
-            CNLS.CNLS.__init__(self, y, x, z=None, cet=CNLS.CET_ADDI, fun=CNLS.FUN_COST, rts=CNLS.RTS_VRS)
+            fun_var = CNLS.FUN_COST
         elif self.shape == Concave:
-            CNLS.CNLS.__init__(self, y, x, z=None, cet=CNLS.CET_ADDI, fun=CNLS.FUN_PROD, rts=CNLS.RTS_CRS)
+            fun_var = CNLS.FUN_PROD
+        CNLS.CNLS.__init__(self, y, x, z=None, cet=CNLS.CET_ADDI, fun=fun_var, rts=CNLS.RTS_CRS)
 
         if self.positive is True:
             self.__model__.beta.setlb(0.0)

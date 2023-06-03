@@ -1,5 +1,5 @@
 import numpy as np
-from pycreg.cr_model import CR
+from cvxreg.cr_model import CR
 from time import time
 
 # Generate data

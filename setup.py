@@ -5,7 +5,7 @@ with open('README.md') as readme_file:
 
 setup_args = dict(
     name='pycvr',
-    version='0.0.1',
+    version='0.0.2',
     description='A Python Package for Convex Regression',
     long_description_content_type="text/markdown",
     long_description=README,
@@ -14,7 +14,7 @@ setup_args = dict(
     author='Zhiqiang Liao',
     author_email='zhiqiang.liao@aalto.fi',
     keywords=['ML', 'Prediction', 'Regression'],
-    url='https://github.com/gEAPA/pySFA',
+    url='https://github.com/ConvexRegression/ConvexRegression',
     download_url='https://pypi.org/project/pysfa/',
     include_package_data=True,
     zip_safe=False,

@@ -1,6 +1,6 @@
-[![PyPI version](https://img.shields.io/pypi/v/pysfa.svg?maxAge=3600)](https://pypi.org/project/pysfa/)[![PyPI downloads](https://img.shields.io/pypi/dm/pysfa.svg?maxAge=21600)](https://pypistats.org/packages/pysfa)
+[![PyPI version](https://img.shields.io/pypi/v/pysfa.svg?maxAge=3600)](https://pypi.org/project/cvxreg/)[![PyPI downloads](https://img.shields.io/pypi/dm/pysfa.svg?maxAge=21600)](https://pypistats.org/packages/cvxreg)
 
-**pycreg** is a Python package for machine learing with convex regression built on [`pyStoNED`](https://github.com/ds2010/pyStoNED). 
+**pycreg** is a Python package for machine learing with convex regression models built on [`pyStoNED`](https://github.com/ds2010/pyStoNED). 
 
 The core aims of this package are:
 * make convex regression models "easy to call" from python,

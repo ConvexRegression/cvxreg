@@ -1,0 +1,22 @@
+Metadata-Version: 2.1
+Name: pycvr
+Version: 0.0.1
+Summary: A Python Package for Convex Regression
+Home-page: https://github.com/gEAPA/pySFA
+Author: Zhiqiang Liao
+Author-email: zhiqiang.liao@aalto.fi
+License: MIT
+Download-URL: https://pypi.org/project/pysfa/
+Keywords: ML,Prediction,Regression
+Platform: UNKNOWN
+Classifier: Development Status :: 5 - Production/Stable
+Classifier: Intended Audience :: Science/Research
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
+pyCVR is a Python-embedded modeling language for convex regression.
+
+

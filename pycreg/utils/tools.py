@@ -3,7 +3,7 @@ from re import compile
 from os import environ
 import numpy as np
 from pyomo.opt import SolverFactory, SolverManagerFactory
-from ..constant import FUN_CVX, FUN_CCV, CET_Model_Categories, OPT_LOCAL, OPT_DEFAULT, RTS_CRS
+from ..constant import OPT_LOCAL, OPT_DEFAULT
 __email_re = compile(r'([^@]+@[^@]+\.[a-zA-Z0-9]+)$')
 
 
@@ -65,29 +65,6 @@ def to_2d_list(li):
             rl.append([value])
         return rl
     return li
-
-
-# Calculate yhat in testing sample
-def yhat(alpha, beta, x_test, fun=FUN_CVX):
-    '''
-    function estimate the y_hat of convex functions.
-    refers to equation (4.1) in journal article:
-    "Representation theorem for convex nonparametric least squares. Timo Kuosmanen (2008)"
-    input:
-    alpha and beta are regression coefficients; x_test is the input of test sample.
-    output:
-    return the estimated y_hat.
-    '''
-
-    # compute yhat for each testing observation
-    yhat = np.zeros((len(x_test),))
-    for i in range(len(x_test)):
-        if fun == FUN_CCV:
-            yhat[i] = (alpha + np.sum(np.multiply(beta, x_test[i]), axis=1)).min(axis=0)
-        elif fun == FUN_CVX:
-            yhat[i] = (alpha + np.sum(np.multiply(beta, x_test[i]), axis=1)).max(axis=0)
-
-    return yhat
 
 
 def assert_valid_basic_data(y, x):
@@ -228,12 +205,6 @@ def assert_various_return_to_scale(rts):
     if rts is False:
         raise Exception(
             "Estimated intercept (alpha) cannot be retrieved due to the constant returns-to-scale assumption.")
-
-
-def assert_various_return_to_scale_omega(rts):
-    if rts == RTS_CRS:
-        raise Exception(
-            "Omega cannot be retrieved due to the constant returns-to-scale assumption.")
 
 
 def assert_solver_available_locally(solver):

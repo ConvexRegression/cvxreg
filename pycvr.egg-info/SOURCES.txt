@@ -1,0 +1,15 @@
+LICENSE
+README.md
+setup.py
+pycvr/__init__.py
+pycvr/constant.py
+pycvr.egg-info/PKG-INFO
+pycvr.egg-info/SOURCES.txt
+pycvr.egg-info/dependency_links.txt
+pycvr.egg-info/not-zip-safe
+pycvr.egg-info/requires.txt
+pycvr.egg-info/top_level.txt
+pycvr/ConvexRegression/__init__.py
+pycvr/ConvexRegression/_base.py
+pycvr/utils/__init__.py
+pycvr/utils/tools.py

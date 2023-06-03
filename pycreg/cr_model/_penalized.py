@@ -4,31 +4,35 @@ from pyomo.core.expr.numvalue import NumericValue
 import numpy as np
 import pandas as pd
 
-from ..constant import FUN_CVX, FUN_CCV, OPT_DEFAULT, OPT_LOCAL
+from ..constant import Convex, Concave, OPT_DEFAULT, OPT_LOCAL
 from ..utils import tools
 
 
-class CR():
-    """Convex Nonparametric Least Square (CNLS)
+class PCR():
+    """
+    Penalized Convex Regression (PCR) model
     """
 
-    def __init__(self, x, y, fun=FUN_CVX, positive=False, fit_intercept=True):
+    def __init__(self, x, y, c=1.0, fun=Convex, positive=False, fit_intercept=True):
         """CNLS model
 
         Args:
             y (float): output variable. 
             x (float): input variables.
-            fun (String, optional): FUN_PROD (production frontier) or FUN_COST (cost frontier). Defaults to FUN_PROD.
-            rts (String, optional): RTS_VRS (variable returns to scale) or RTS_CRS (constant returns to scale). Defaults to RTS_VRS.
+            c (float, optional): penalty parameter. Defaults to 1.0.
+            fun (String, optional): Convex (convex funtion) or FConcave (concave funtion). Defaults to Convex.
+            positive (bool, optional): True if the coefficients are positive. Defaults to False.
+            fit_intercept (bool, optional): True if the model should include an intercept. Defaults to True.
         """
         # TODO(error/warning handling): Check the configuration of the model exist
         self.y, self.x = tools.assert_valid_basic_data(y, x)
 
+        self.c = c
         self.fun = fun
         self.fit_intercept = fit_intercept
         self.positive = positive
 
-        # Initialize the CNLS model
+        # Initialize the CR model
         self.__model__ = ConcreteModel()
 
         # Initialize the sets
@@ -92,9 +96,9 @@ class CR():
 
     def __afriat_rule(self):
         """Return the proper afriat inequality constraint"""
-        if self.fun == FUN_CCV:
+        if self.fun == Concave:
             __operator = NumericValue.__le__
-        elif self.fun == FUN_CVX:
+        elif self.fun == Convex:
             __operator = NumericValue.__ge__
 
         if self.fit_intercept:

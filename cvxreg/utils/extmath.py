@@ -14,7 +14,6 @@ def yhat(alpha, beta, x_test, fun=Convex):
     output:
     return the estimated y_hat.
     '''
-
     # check the dimension of input
     if beta.shape[1] != x_test.shape[1]:
         raise ValueError('beta and x_test should have the same number of dimensions.')

@@ -61,7 +61,11 @@ class CR(CRModel, CNLS.CNLS):
             fun_var = CNLS.FUN_COST
         elif self.shape == Concave:
             fun_var = CNLS.FUN_PROD
-        CNLS.CNLS.__init__(self, y, x, z=None, cet=CNLS.CET_ADDI, fun=fun_var, rts=CNLS.RTS_CRS)
+        if self.fit_intercept is True:
+            intercept = CNLS.RTS_VRS
+        else:
+            intercept = CNLS.RTS_CRS
+        CNLS.CNLS.__init__(self, y, x, z=None, cet=CNLS.CET_ADDI, fun=fun_var, rts=intercept)
 
         if self.positive is True:
             self.__model__.beta.setlb(0.0)
@@ -81,7 +85,6 @@ class CR(CRModel, CNLS.CNLS):
             self.__model__, email, solver)
         
         tools.assert_optimized(self.optimization_status)
-        tools.assert_various_return_to_scale(self.fit_intercept)
 
         alpha = list(self.__model__.alpha[:].value)
 

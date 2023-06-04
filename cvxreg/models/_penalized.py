@@ -34,7 +34,7 @@ class PCR(CRModel, CNLS.CNLS):
             fun_var = CNLS.FUN_COST
         elif self.shape == Concave:
             fun_var = CNLS.FUN_PROD
-        if self.fit_intercept is True:
+        if self.fit_intercept:
             intercept = CNLS.RTS_VRS
         else:
             intercept = CNLS.RTS_CRS
@@ -46,7 +46,7 @@ class PCR(CRModel, CNLS.CNLS):
                                                      sense=minimize,
                                                      doc='objective function')
 
-        if self.positive is True:
+        if self.positive:
             self.__model__.beta.setlb(0.0)
         else:
             self.__model__.beta.setlb(None)

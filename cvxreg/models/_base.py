@@ -8,6 +8,7 @@ from ..base import BaseEstimator
 from ..constant import Convex, Concave, OPT_DEFAULT, OPT_LOCAL
 from ..utils import tools
 from ..utils.extmath import yhat
+from ..utils._param_check import StrOptions
 
 class CRModel(BaseEstimator, metaclass=ABCMeta):
     """
@@ -41,8 +42,13 @@ class CR(CRModel, CNLS.CNLS):
     """
     Convex Regression (CR) model
     """
-
-    def __init__(self, x, y, shape=Convex, positive=False, fit_intercept=True):
+    _parameter_constraints: dict = {
+        "shape": [StrOptions({Convex, Concave})],
+        'fit_intercept': ['boolean'],
+        'positive': ['boolean']
+    }
+    
+    def __init__(self, shape=Convex, positive=False, fit_intercept=True):
         """CNLS model
 
         Args:
@@ -57,30 +63,33 @@ class CR(CRModel, CNLS.CNLS):
         self.fit_intercept = fit_intercept
         self.positive = positive
 
-        if self.shape == Convex:
-            fun_var = CNLS.FUN_COST
-        elif self.shape == Concave:
-            fun_var = CNLS.FUN_PROD
-        if self.fit_intercept:
-            intercept = CNLS.RTS_VRS
-        else:
-            intercept = CNLS.RTS_CRS
-        CNLS.CNLS.__init__(self, y, x, z=None, cet=CNLS.CET_ADDI, fun=fun_var, rts=intercept)
 
-        if self.positive:
-            self.__model__.beta.setlb(0.0)
-        else:
-            self.__model__.beta.setlb(None)
-
-
-    def fit(self, email=OPT_LOCAL, solver=OPT_DEFAULT):
+    def fit(self, x, y, email=OPT_LOCAL, solver=OPT_DEFAULT):
         """Optimize the function by requested method
 
         Args:
             email (string): The email address for remote optimization. It will optimize locally if OPT_LOCAL is given.
             solver (string): The solver chosen for optimization. It will optimize with default solver if OPT_DEFAULT is given.
         """
-        # TODO(error/warning handling): Check problem status after optimization
+        self._validate_params()
+        x, y = self._validate_data(x, y)
+
+        # interface with CNLS
+        if self.shape == Convex:
+            self.fun_var = CNLS.FUN_COST
+        elif self.shape == Concave:
+            self.fun_var = CNLS.FUN_PROD
+        if self.fit_intercept:
+            self.intercept = CNLS.RTS_VRS
+        else:
+            self.intercept = CNLS.RTS_CRS
+        CNLS.CNLS.__init__(self, y, x, z=None, cet=CNLS.CET_ADDI, fun=self.fun_var, rts=self.intercept)
+        if self.positive:
+            self.__model__.beta.setlb(0.0)
+        else:
+            self.__model__.beta.setlb(None)
+
+        # optimize the model with solver
         self.problem_status, self.optimization_status = tools.optimize_model(
             self.__model__, email, solver)
         

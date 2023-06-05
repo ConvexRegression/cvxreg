@@ -1,5 +1,5 @@
 import numpy as np
-from cvxreg.models import CR
+from cvxreg.models import PCR
 from time import time
 
 # Generate data
@@ -14,8 +14,8 @@ y = y_true + nse
 
 # print the computation time
 t_start = time()
-cr = CR(x ,y)   # Fit the model
-cr.fit()
+cr = PCR()   # Fit the model
+cr.fit(x, y)
 t_delta = time() - t_start
 print('Seconds taken: %f' % t_delta)
 

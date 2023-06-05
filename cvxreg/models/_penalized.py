@@ -1,4 +1,5 @@
-# import dependencies
+from numbers import Real
+
 import numpy as np
 import pandas as pd
 from pystoned import CNLS
@@ -7,6 +8,7 @@ from pyomo.environ import Objective, minimize
 from ._base import CRModel
 from ..constant import Convex, Concave, OPT_DEFAULT, OPT_LOCAL
 from ..utils import tools
+from ..utils._param_check import Interval, StrOptions
 
 
 class PCR(CRModel, CNLS.CNLS):
@@ -14,7 +16,14 @@ class PCR(CRModel, CNLS.CNLS):
     Penalized Convex Regression (PCR) model
     """
 
-    def __init__(self, x, y, c=1.0, shape=Convex, positive=False, fit_intercept=True):
+    _parameter_constraints: dict = {
+        "c": [Interval(Real, 0, None)],
+        "shape": [StrOptions({Convex, Concave})],
+        'fit_intercept': ['boolean'],
+        'positive': ['boolean']
+    }
+
+    def __init__(self, c=1.0, shape=Convex, positive=False, fit_intercept=True):
         """PCR model
 
         Args:
@@ -29,6 +38,16 @@ class PCR(CRModel, CNLS.CNLS):
         self.shape = shape
         self.fit_intercept = fit_intercept
         self.positive = positive
+
+    def fit(self, x, y, email=OPT_LOCAL, solver=OPT_DEFAULT):
+        """Optimize the function by requested method
+
+        Args:
+            email (string): The email address for remote optimization. It will optimize locally if OPT_LOCAL is given.
+            solver (string): The solver chosen for optimization. It will optimize with default solver if OPT_DEFAULT is given.
+        """
+        self._validate_params()
+        x, y = self._validate_data(x, y)
 
         if self.shape == Convex:
             fun_var = CNLS.FUN_COST
@@ -51,20 +70,6 @@ class PCR(CRModel, CNLS.CNLS):
         else:
             self.__model__.beta.setlb(None)
 
-    def __new_objective_rule(self):
-        """return new objective function"""
-        def objective_rule(model):
-            return sum(model.epsilon[i] ** 2 for i in model.I) \
-                + self.c * sum(model.beta[i, j] ** 2 for i in model.I for j in model.J)
-        return objective_rule
-
-    def fit(self, email=OPT_LOCAL, solver=OPT_DEFAULT):
-        """Optimize the function by requested method
-
-        Args:
-            email (string): The email address for remote optimization. It will optimize locally if OPT_LOCAL is given.
-            solver (string): The solver chosen for optimization. It will optimize with default solver if OPT_DEFAULT is given.
-        """
         # TODO(error/warning handling): Check problem status after optimization
         self.problem_status, self.optimization_status = tools.optimize_model(
             self.__model__, email, solver)
@@ -85,3 +90,10 @@ class PCR(CRModel, CNLS.CNLS):
             self.intercept_ = 0.0
             self.coef_ = beta.to_numpy()
         return self
+    
+    def __new_objective_rule(self):
+        """return new objective function"""
+        def objective_rule(model):
+            return sum(model.epsilon[i] ** 2 for i in model.I) \
+                + self.c * sum(model.beta[i, j] ** 2 for i in model.I for j in model.J)
+        return objective_rule

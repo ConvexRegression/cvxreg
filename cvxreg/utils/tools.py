@@ -29,15 +29,11 @@ def optimize_model(model, email, solver=OPT_DEFAULT):
         else:
             solver = "mosek"
         solver_instance = SolverFactory(solver)
-        print("Estimating the model locally with {} solver.".format(
-            solver), flush=False)
         return solver_instance.solve(model, tee=False), 1
     else:
         if solver is OPT_DEFAULT:
             solver = "mosek"
         solver_instance = SolverManagerFactory('neos')
-        print("Estimating the model remotely with {} solver.".format(
-            solver), flush=True)
         return solver_instance.solve(model, tee=False, opt=solver), 1
 
 

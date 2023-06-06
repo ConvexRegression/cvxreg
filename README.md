@@ -1,5 +1,4 @@
-[![Github Actions Status](https://github.com/ConvexRegression/ConvexRegression/actions/workflows/GitHub%20CI/badge.svg?event=push)](https://github.com/ConvexRegression/ConvexRegression/actions?query=event%3Apush+workflow%3A%22GitHub+CI%22)
-[![PyPI version](https://img.shields.io/pypi/v/cvxreg.svg?maxAge=3600)](https://pypi.org/project/cvxreg/)
+[![New release](https://img.shields.io/github/v/release/ConvexRegression/ConvexRegression?display_name=tag&label=Lastest&color=%234B78E6)](https://github.com/ConvexRegression/ConvexRegression/releases)
 [![PyPI downloads](https://img.shields.io/pypi/dm/cvxreg.svg?maxAge=21600)](https://pypistats.org/packages/cvxreg)
 
 **cvxreg** is a Python package for machine learing with convex regression models built on [`pyStoNED`](https://github.com/ds2010/pyStoNED). 

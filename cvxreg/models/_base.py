@@ -5,8 +5,9 @@ import pandas as pd
 from pystoned import CNLS
 
 from ..base import BaseEstimator
-from ..constant import Convex, Concave, OPT_DEFAULT, OPT_LOCAL
-from ..utils import tools
+from ..constant import convex, concave
+from ..utils.check import check_optimization_status, check_array
+from ..utils.opt import optimize_model
 from ..utils.extmath import yhat
 from ..utils._param_check import StrOptions
 
@@ -19,7 +20,6 @@ class CRModel(BaseEstimator, metaclass=ABCMeta):
         """Fit model."""
 
     def _decision_function(self, x):
-        tools.assert_optimized(self.optimization_status)
         
         x = self._validate_data(x)
         y_hat = yhat(self.intercept_, self.coef_, x, fun=self.shape)
@@ -40,61 +40,78 @@ class CRModel(BaseEstimator, metaclass=ABCMeta):
 
 class CR(CRModel, CNLS.CNLS):
     """
-    Convex Regression (CR) model
+    Convex Regression (CR) model.
+
+    parameters
+    ----------
+    shape : string, optional (default=Convex)
+        The shape of the estimated function. It can be either Convex or Concave.
+    positive : boolean, optional (default=False)
+        Whether the estimated function is monotonic increasing or not.
+    fit_intercept : boolean, optional (default=True)
+        Whether to calculate the intercept for this model. If set to False, no intercept will be used in calculations.
+    
     """
+
+
     _parameter_constraints: dict = {
-        "shape": [StrOptions({Convex, Concave})],
+        "shape": [StrOptions({convex, concave})],
         'fit_intercept': ['boolean'],
-        'positive': ['boolean']
+        'positive': ['boolean'],
+        'email': [str, None],
+        'solver': [str]
     }
     
-    def __init__(self, shape=Convex, positive=False, fit_intercept=True):
-        """CNLS model
-
-        Args:
-            y (float): output variable. 
-            x (float): input variables.
-            fun (String, optional): FUN_CVX (convex funtion) or FUN_CCV (concave funtion). Defaults to FUN_CVX.
-            positive (bool, optional): True if the coefficients are positive. Defaults to False.
-            fit_intercept (bool, optional): True if the model should include an intercept. Defaults to True.
-        """
-        
+    def __init__(
+        self, 
+        shape=convex, 
+        positive=False, 
+        fit_intercept=True, 
+        email=None, 
+        solver='mosek'
+    ):
         self.shape = shape
         self.fit_intercept = fit_intercept
         self.positive = positive
+        self.email = email
+        self.solver = solver
 
+    def fit(self, x, y):
+        """fit the model with solver
 
-    def fit(self, x, y, email=OPT_LOCAL, solver=OPT_DEFAULT):
-        """Optimize the function by requested method
+        parameters
+        ----------
+        x : ndarray of shape (n_samples, n_features) data.
+        y : ndarray of shape (n_samples,) target values.
 
-        Args:
-            email (string): The email address for remote optimization. It will optimize locally if OPT_LOCAL is given.
-            solver (string): The solver chosen for optimization. It will optimize with default solver if OPT_DEFAULT is given.
+        Returns
+        -------
+        self : returns an instance of self
+                Fitted model.
         """
         self._validate_params()
         x, y = self._validate_data(x, y)
 
         # interface with CNLS
-        if self.shape == Convex:
-            self.fun_var = CNLS.FUN_COST
-        elif self.shape == Concave:
-            self.fun_var = CNLS.FUN_PROD
+        if self.shape == convex:
+            fun_var = CNLS.FUN_COST
+        elif self.shape == concave:
+            fun_var = CNLS.FUN_PROD
         if self.fit_intercept:
-            self.intercept = CNLS.RTS_VRS
+            intercept = CNLS.RTS_VRS
         else:
-            self.intercept = CNLS.RTS_CRS
-        CNLS.CNLS.__init__(self, y, x, z=None, cet=CNLS.CET_ADDI, fun=self.fun_var, rts=self.intercept)
+            intercept = CNLS.RTS_CRS
+        CNLS.CNLS.__init__(self, y, x, z=None, cet=CNLS.CET_ADDI, fun=fun_var, rts=intercept)
         if self.positive:
             self.__model__.beta.setlb(0.0)
         else:
             self.__model__.beta.setlb(None)
 
         # optimize the model with solver
-        self.problem_status, self.optimization_status = tools.optimize_model(
-            self.__model__, email, solver)
+        self.problem_status, self.optimization_status = optimize_model(
+            self.__model__, self.email, self.solver)
+        check_optimization_status(self.optimization_status)
         
-        tools.assert_optimized(self.optimization_status)
-
         alpha = list(self.__model__.alpha[:].value)
 
         beta = np.asarray([i + tuple([j]) for i, j in zip(list(self.__model__.beta),

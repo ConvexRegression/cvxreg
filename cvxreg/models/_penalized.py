@@ -6,8 +6,8 @@ from pystoned import CNLS
 from pyomo.environ import Objective, minimize
 
 from ._base import CRModel
-from ..constant import Convex, Concave, OPT_DEFAULT, OPT_LOCAL
-from ..utils import tools
+from ..constant import convex, concave, OPT_DEFAULT, OPT_LOCAL
+from ..utils import opt
 from ..utils._param_check import Interval, StrOptions
 
 
@@ -18,12 +18,12 @@ class PCR(CRModel, CNLS.CNLS):
 
     _parameter_constraints: dict = {
         "c": [Interval(Real, 0, None)],
-        "shape": [StrOptions({Convex, Concave})],
+        "shape": [StrOptions({convex, concave})],
         'fit_intercept': ['boolean'],
         'positive': ['boolean']
     }
 
-    def __init__(self, c=1.0, shape=Convex, positive=False, fit_intercept=True):
+    def __init__(self, c=1.0, shape=convex, positive=False, fit_intercept=True):
         """PCR model
 
         Args:
@@ -49,9 +49,9 @@ class PCR(CRModel, CNLS.CNLS):
         self._validate_params()
         x, y = self._validate_data(x, y)
 
-        if self.shape == Convex:
+        if self.shape == convex:
             fun_var = CNLS.FUN_COST
-        elif self.shape == Concave:
+        elif self.shape == concave:
             fun_var = CNLS.FUN_PROD
         if self.fit_intercept:
             intercept = CNLS.RTS_VRS
@@ -71,10 +71,10 @@ class PCR(CRModel, CNLS.CNLS):
             self.__model__.beta.setlb(None)
 
         # TODO(error/warning handling): Check problem status after optimization
-        self.problem_status, self.optimization_status = tools.optimize_model(
+        self.problem_status, self.optimization_status = solver.optimize_model(
             self.__model__, email, solver)
         
-        tools.assert_optimized(self.optimization_status)
+        solver.assert_optimized(self.optimization_status)
 
         alpha = list(self.__model__.alpha[:].value)
 

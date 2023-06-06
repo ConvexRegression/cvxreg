@@ -1,18 +1,18 @@
 
 # Shape of the function
-Convex = "convex"
+convex = "convex"
 """
 Convex: convex function.
 """
 
-Concave = "concave"
+concave = "concave"
 """
 Concave: concave funciton.
 """
 
 FUN_Categories = {
-    Convex: "convex function",
-    Concave: "concave funciton"
+    convex: "convex function",
+    concave: "concave funciton"
 }
 
 # Optimization

@@ -1,10 +1,10 @@
 import numpy as np
 
-from ..constant import Convex, Concave
+from ..constant import convex, concave
 
 
 # Calculate yhat in testing sample
-def yhat(alpha, beta, x_test, fun=Convex):
+def yhat(alpha, beta, x_test, fun=convex):
     '''
     function estimate the y_hat of convex functions.
     refers to equation (4.1) in journal article:
@@ -21,9 +21,9 @@ def yhat(alpha, beta, x_test, fun=Convex):
         # compute yhat for each testing observation
         yhat = np.zeros((len(x_test),))
         for i in range(len(x_test)):
-            if fun == Concave:
+            if fun == concave:
                 yhat[i] = (alpha + np.sum(np.multiply(beta, x_test[i]), axis=1)).min(axis=0)
-            elif fun == Convex:
+            elif fun == convex:
                 yhat[i] = (alpha + np.sum(np.multiply(beta, x_test[i]), axis=1)).max(axis=0)
 
     return yhat

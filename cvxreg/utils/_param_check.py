@@ -35,22 +35,30 @@ def validate_parameter_constraints(parameter_constraints, params, caller_name):
                 "Check the list of available parameters "
                 "with `estimator.get_params().keys()`." %
                 (para_names, caller_name))
+        
         constraints = parameter_constraints[para_names]
+
+        if constraints == "novalidation":
+            continue
+
         constraints = [make_constraint(constraint) for constraint in constraints]
+
         for constraint in constraints:
             if constraint.check(para_values):
                 break
-            else:
-                raise InvalidParameterError(
-                    f"The parameter {para_names} must be {constraint}."
-                    f" Got {para_values} instead."
-                    )
+        else:
+            raise InvalidParameterError(
+                f"The parameter {para_names} must be {constraint}."
+                f" Got {para_values} instead."
+                )
             
 def make_constraint(constraint):
     """Make a constraint object from a user-provided value."""
 
     if isinstance(constraint, type):
         return _Instancesof(constraint)
+    if constraint is None:
+        return _NoneConstraint()
     if isinstance(constraint, (Interval, StrOptions)):
         return constraint
     if isinstance(constraint, str) and constraint == 'boolean':
@@ -97,6 +105,15 @@ class _Instancesof(_Constraint):
     def __repr__(self):
         return "Instances of %s" % (self.types,)
 
+class _NoneConstraint(_Constraint):
+    """Constraint representing the None singleton."""
+
+    def check(self, value):
+        return value is None
+    
+    def __repr__(self):
+        return "None"
+    
 class Interval(_Constraint):
     """Constraint representing a closed interval of numbers.
 

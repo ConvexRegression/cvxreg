@@ -6,7 +6,7 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'ConvexRegression'
+project = 'cvxreg'
 copyright = '2023, Zhiqiang Liao'
 author = 'Zhiqiang Liao'
 release = 'v0.0.6'

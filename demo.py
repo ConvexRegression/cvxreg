@@ -19,4 +19,4 @@ cr.fit(x, y)
 t_delta = time() - t_start
 print('Seconds taken: %f' % t_delta)
 
-print(cr.predict([[1, 2, 3]]))
+print(cr.predict([[0.1, 0.2, 0.3]]))

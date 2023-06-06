@@ -31,6 +31,7 @@ install_requires = [
     'numpy>=1.19.2',
     'pandas>=1.1.3',
     'pystoned>=0.6.0',
+    'pyomo>=5.7.3',
     'scipy>=1.5.2'
 ]
 

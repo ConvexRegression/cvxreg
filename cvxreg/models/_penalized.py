@@ -7,39 +7,56 @@ from pyomo.environ import Objective, minimize
 
 from ._base import CRModel
 from ..constant import convex, concave, OPT_DEFAULT, OPT_LOCAL
-from ..utils import opt
+from ..utils._pyomo_opt import check_optimization_status, optimize_model
 from ..utils._param_check import Interval, StrOptions
 
 
 class PCR(CRModel, CNLS.CNLS):
     """
-    Penalized Convex Regression (PCR) model
+    Penalized Convex Regression (PCR) model.
+
+    parameters
+    ----------
+    c : float, optional (default=1.0)
+        The penalty parameter.
+    shape : string, optional (default=Convex)
+        The shape of the estimated function. It can be either Convex or Concave.
+    positive : boolean, optional (default=False)
+        Whether the estimated function is monotonic increasing or not.
+    fit_intercept : boolean, optional (default=True)
+        Whether to calculate the intercept for this model. If set to False, no intercept will be used in calculations.
+    email : string, optional (default=None)
+        The email address for remote optimization. It will optimize locally if None is given.
+    solver : string, optional (default='mosek')
+        The solver chosen for optimization. It will optimize with mosek solver if None is given.
     """
 
     _parameter_constraints: dict = {
         "c": [Interval(Real, 0, None)],
         "shape": [StrOptions({convex, concave})],
         'fit_intercept': ['boolean'],
-        'positive': ['boolean']
+        'positive': ['boolean'],
+        'email': [None, str],
+        'solver': [str]
     }
 
-    def __init__(self, c=1.0, shape=convex, positive=False, fit_intercept=True):
-        """PCR model
-
-        Args:
-            y (float): output variable. 
-            x (float): input variables.
-            fun (String, optional): FUN_CVX (convex funtion) or FUN_CCV (concave funtion). Defaults to FUN_CVX.
-            positive (bool, optional): True if the coefficients are positive. Defaults to False.
-            fit_intercept (bool, optional): True if the model should include an intercept. Defaults to True.
-        """
-        
+    def __init__(
+        self, 
+        c=1.0, 
+        shape=convex, 
+        positive=False, 
+        fit_intercept=True,
+        email=None, 
+        solver='mosek'
+    ):
         self.c = c
         self.shape = shape
         self.fit_intercept = fit_intercept
         self.positive = positive
+        self.email = email
+        self.solver = solver
 
-    def fit(self, x, y, email=OPT_LOCAL, solver=OPT_DEFAULT):
+    def fit(self, x, y):
         """Optimize the function by requested method
 
         Args:
@@ -70,11 +87,10 @@ class PCR(CRModel, CNLS.CNLS):
         else:
             self.__model__.beta.setlb(None)
 
-        # TODO(error/warning handling): Check problem status after optimization
-        self.problem_status, self.optimization_status = solver.optimize_model(
-            self.__model__, email, solver)
-        
-        solver.assert_optimized(self.optimization_status)
+                # optimize the model with solver
+        self.problem_status, self.optimization_status = optimize_model(
+            self.__model__, self.email, self.solver)
+        check_optimization_status(self.optimization_status)
 
         alpha = list(self.__model__.alpha[:].value)
 

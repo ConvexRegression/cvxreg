@@ -1,5 +1,4 @@
 import numpy as np
-from pyomo.opt import SolverFactory
 
 def _num_samples(x):
     """Return number of samples in array-like x."""
@@ -87,12 +86,3 @@ def check_x_y(x, y):
     check_consistent_length(x, y)
 
     return x, y
-
-def check_optimization_status(optimization_status):
-    if optimization_status == 0:
-        raise Exception(
-            "Model isn't optimized. Use optimize() method to estimate the model.")
-
-def check_local_solver(solver):
-    if not SolverFactory(solver).available():
-        raise ValueError("Solver {} is not available locally.".format(solver))

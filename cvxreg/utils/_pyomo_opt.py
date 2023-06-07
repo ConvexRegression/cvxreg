@@ -3,7 +3,6 @@ from os import environ
 __email_re = compile(r'([^@]+@[^@]+\.[a-zA-Z0-9]+)$')
 
 from pyomo.environ import SolverFactory, SolverManagerFactory
-from .check import check_local_solver
 
 def set_neos_email(address):
     """pass email address to NEOS server 
@@ -17,7 +16,6 @@ def set_neos_email(address):
         raise ValueError("Invalid email address.")
     environ['NEOS_EMAIL'] = address
     return True
-
 
 def optimize_model(model, email, solver):
     if not set_neos_email(email):
@@ -33,4 +31,11 @@ def optimize_model(model, email, solver):
         solver_instance = SolverManagerFactory('neos')
         return solver_instance.solve(model, tee=False, opt=solver), 1
 
+def check_optimization_status(optimization_status):
+    if optimization_status == 0:
+        raise Exception(
+            "Model isn't optimized. Use optimize() method to estimate the model.")
 
+def check_local_solver(solver):
+    if not SolverFactory(solver).available():
+        raise ValueError("Solver {} is not available locally.".format(solver))

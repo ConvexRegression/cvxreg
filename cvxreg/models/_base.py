@@ -6,9 +6,8 @@ from pystoned import CNLS
 
 from ..base import BaseEstimator
 from ..constant import convex, concave
-from ..utils.check import check_optimization_status
-from ..utils.opt import optimize_model
 from ..utils.extmath import yhat
+from ..utils._pyomo_opt import optimize_model, check_optimization_status
 from ..utils._param_check import StrOptions
 
 class CRModel(BaseEstimator, metaclass=ABCMeta):
@@ -50,7 +49,10 @@ class CR(CRModel, CNLS.CNLS):
         Whether the estimated function is monotonic increasing or not.
     fit_intercept : boolean, optional (default=True)
         Whether to calculate the intercept for this model. If set to False, no intercept will be used in calculations.
-    
+    email : string, optional (default=None)
+        The email address for remote optimization. It will optimize locally if None is given.
+    solver : string, optional (default='mosek')
+        The solver chosen for optimization. It will optimize with mosek solver if None is given.
     """
 
 

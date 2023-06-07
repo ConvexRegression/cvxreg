@@ -5,7 +5,7 @@ with open('README.md') as readme_file:
 
 setup_args = dict(
     name='cvxreg',
-    version='0.0.6',
+    version='0.0.7',
     description='A Python Package for Convex Regression',
     long_description_content_type="text/markdown",
     long_description=README,
@@ -14,7 +14,7 @@ setup_args = dict(
     author='Zhiqiang Liao',
     author_email='zhiqiang.liao@aalto.fi',
     keywords=['ML', 'Prediction', 'Regression'],
-    url='https://github.com/ConvexRegression/ConvexRegression',
+    url='https://github.com/ConvexRegression/cvxreg',
     download_url='https://pypi.org/project/cvxreg/',
     include_package_data=True,
     zip_safe=False,
@@ -31,8 +31,7 @@ install_requires = [
     'numpy>=1.19.2',
     'pandas>=1.1.3',
     'pystoned>=0.6.0',
-    'pyomo>=5.7.3',
-    'scipy>=1.5.2'
+    'pyomo>=5.7.3'
 ]
 
 if __name__ == '__main__':

@@ -1,0 +1,9 @@
+cloud_sptheme
+nbsphinx
+numpy
+numpydoc
+recommonmark
+scipy
+cvxreg
+sphinx
+sphinx_markdown_tables

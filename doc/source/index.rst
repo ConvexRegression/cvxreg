@@ -40,5 +40,6 @@ For example, the following code estimates a convex function with CR model:
    y_pred = cr.predict([[0.1, 0.2, 0.3]])
 
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+   :hidden:
+
+   install/index

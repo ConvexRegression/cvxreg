@@ -21,13 +21,15 @@ def set_neos_email(address):
 
 def optimize_model(model, email, solver):
     if not set_neos_email(email):
-        if solver is not 'mosek':
+        if solver is not None:
             check_local_solver(solver)
+        else:
+            solver = "mosek"
         solver_instance = SolverFactory(solver)
         return solver_instance.solve(model, tee=False), 1
     else:
-        if solver is not 'mosek':
-            check_local_solver(solver)
+        if solver is None:
+            solver = "mosek"
         solver_instance = SolverManagerFactory('neos')
         return solver_instance.solve(model, tee=False, opt=solver), 1
 

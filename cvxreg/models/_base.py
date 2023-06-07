@@ -6,7 +6,7 @@ from pystoned import CNLS
 
 from ..base import BaseEstimator
 from ..constant import convex, concave
-from ..utils.check import check_optimization_status, check_array
+from ..utils.check import check_optimization_status
 from ..utils.opt import optimize_model
 from ..utils.extmath import yhat
 from ..utils._param_check import StrOptions
@@ -58,7 +58,7 @@ class CR(CRModel, CNLS.CNLS):
         "shape": [StrOptions({convex, concave})],
         'fit_intercept': ['boolean'],
         'positive': ['boolean'],
-        'email': [str, None],
+        'email': [None, str],
         'solver': [str]
     }
     

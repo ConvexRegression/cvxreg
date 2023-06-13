@@ -14,7 +14,7 @@ pip
 
 Solver options
 --------------
-cvxreg is built on top of `CVXPY <https://www.cvxpy.org/>`_, which supports a variety of open-source solvers `ECOS <https://www.embotech.com/ECOS>`, `OSQP <https://osqp.org/>`, and `SCS <http://github.com/cvxgrp/scs>`. 
+cvxreg is built on top of `CVXPY <https://www.cvxpy.org/>`_, which supports a variety of open-source solvers `ECOS <https://www.embotech.com/ECOS>`_, `OSQP <https://osqp.org/>`_, and `SCS <http://github.com/cvxgrp/scs>`_. 
 We use the default solver `ECOS <https://www.embotech.com/ECOS>`_ in cvxreg. To use a different solver, simply install the solver and specify the solver name in the ``solver`` argument of the model.
 
 ::
@@ -27,12 +27,11 @@ Many other solvers can be called by cvxreg if installed separately. See the tabl
 
 To see which solvers are available in your machine, run:
 
-::
+.. code-block:: python
     from cvxreg import installed_solvers
     print(installed_solvers())
 
 To use a commercial solver, you need to install the solver and specify the solver name in the ``solver`` argument of the model. For example, to use `MOSEK <https://www.mosek.com/>`_:
 
 ::
-
     model = models.CR(solver='mosek')

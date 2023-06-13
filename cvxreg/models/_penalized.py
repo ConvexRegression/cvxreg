@@ -10,8 +10,8 @@ import numpy as np
 from cvxpy import Variable, sum_squares
 
 from ._base import CRModel, _calculate_matrix_A, _calculate_matrix_B, _shape_constraint
+from ._cvxpy_opt import solve_model
 from ..constant import convex, concave
-from ..opt.cvxpy_opt import solve_model
 from ..utils._param_check import Interval, StrOptions
 
 

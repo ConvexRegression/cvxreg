@@ -9,8 +9,8 @@ from abc import ABCMeta, abstractmethod
 import numpy as np
 from cvxpy import Variable, sum_squares
 
+from ._cvxpy_opt import solve_model
 from ..base import BaseEstimator
-from ..opt.cvxpy_opt import solve_model
 from ..constant import convex, concave
 from ..utils.extmath import yhat
 from ..utils._param_check import StrOptions

@@ -1,3 +1,10 @@
+"""
+Parameter validation utilities.
+"""
+
+# Author: Zhiqiang Liao @ Aalto University <zhiqiang.liao@aalto.fi>
+# License: MIT
+
 from abc import ABC
 from abc import abstractmethod
 from numbers import Real,Integral

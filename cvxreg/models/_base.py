@@ -1,14 +1,58 @@
-# import dependencies
+"""
+Base convex regression models
+"""
+
+# Author: Zhiqiang Liao @ Aalto University <zhiqiang.liao@aalto.fi>
+# License: MIT
+
 from abc import ABCMeta, abstractmethod
 import numpy as np
 import pandas as pd
-from pystoned import CNLS
+from cvxpy import Variable, sum_squares
 
 from ..base import BaseEstimator
 from ..constant import convex, concave
 from ..utils.extmath import yhat
-from ..utils._pyomo_opt import optimize_model, check_optimization_status
+from ..solvers._cvxpy_opt import solve_model
 from ..utils._param_check import StrOptions
+from ..utils.check import check_ndarray
+
+def _calculate_matrix_A(n):
+    res = np.zeros((n*(n-1), n))
+    k = 0
+    for i in range(n):
+        for j in range(n):
+            if i != j:
+                res[k, i] = -1
+                res[k, j] = 1
+                k += 1
+    return res
+
+def _calculate_matrix_B(x, n, d):
+    res = np.zeros((n*(n-1), n*d))
+    k = 0
+    for i in range(n):
+        for j in range(n):
+            if i != j:
+                res[k, i*d:(i+1)*d] = x[j,:] - x[i,:]
+                k += 1
+    return res
+
+def _shape_constraint(A, B, Xi, theta, n, d, shape=convex, positive=False):
+    check_ndarray(A, n*(n-1), n)
+    check_ndarray(B, n*(n-1), n*d)
+
+    if shape == convex:
+        cons_shape = A @ theta >= B @ Xi
+    elif shape == concave:
+        cons_shape = A @ theta <= B @ Xi
+
+    if positive:
+        cons_positive = Xi >= 0.0
+    else:
+        return cons_shape
+
+    return cons_shape, cons_positive
 
 class CRModel(BaseEstimator, metaclass=ABCMeta):
     """
@@ -37,7 +81,7 @@ class CRModel(BaseEstimator, metaclass=ABCMeta):
         return self._decision_function(x)
     
 
-class CR(CRModel, CNLS.CNLS):
+class CR(CRModel):
     """
     Convex Regression (CR) model.
 
@@ -83,8 +127,8 @@ class CR(CRModel, CNLS.CNLS):
 
         parameters
         ----------
-        x : ndarray of shape (n_samples, n_features) data.
-        y : ndarray of shape (n_samples,) target values.
+        x : ndarray of shape (n, d) data.
+        y : ndarray of shape (n,) target values.
 
         Returns
         -------
@@ -94,38 +138,33 @@ class CR(CRModel, CNLS.CNLS):
         self._validate_params()
         x, y = self._validate_data(x, y)
 
-        # interface with CNLS
-        if self.shape == convex:
-            fun_var = CNLS.FUN_COST
-        elif self.shape == concave:
-            fun_var = CNLS.FUN_PROD
-        if self.fit_intercept:
-            intercept = CNLS.RTS_VRS
-        else:
-            intercept = CNLS.RTS_CRS
-        CNLS.CNLS.__init__(self, y, x, z=None, cet=CNLS.CET_ADDI, fun=fun_var, rts=intercept)
-        if self.positive:
-            self.__model__.beta.setlb(0.0)
-        else:
-            self.__model__.beta.setlb(None)
+        # calculate the matrix A and B
+        n, d = x.shape
+        A = _calculate_matrix_A(n)
+        B = _calculate_matrix_B(x, n, d)
+
+        # interface with cvxpy
+        Xi = Variable(n*d)
+        theta = Variable(n)
+        objective = 0.5*sum_squares(y - theta)
+
+        # add shape constraint
+        constraint = [_shape_constraint(A, B, Xi, theta, n, d, shape=self.shape, positive=self.positive)]
 
         # optimize the model with solver
-        self.problem_status, self.optimization_status = optimize_model(
-            self.__model__, self.email, self.solver)
-        check_optimization_status(self.optimization_status)
+        self.solution = solve_model(objective, constraint, self.solver)
         
-        alpha = list(self.__model__.alpha[:].value)
+        Xi_val = Xi.value.reshape(n,d)
+        theta_val = theta.value
 
-        beta = np.asarray([i + tuple([j]) for i, j in zip(list(self.__model__.beta),
-                                                          list(self.__model__.beta[:, :].value))])
-        beta = pd.DataFrame(beta, columns=['Name', 'Key', 'Value'])
-        beta = beta.pivot(index='Name', columns='Key', values='Value')
+        alpha = list([theta_val[i] - Xi_val[i,:]@x[i,:] for i in range(n)])
+        beta = Xi_val
     
         if self.fit_intercept:
             self.intercept_ = np.array(alpha)
-            self.coef_ = beta.to_numpy()
+            self.coef_ = beta
         else:
             self.intercept_ = 0.0
-            self.coef_ = beta.to_numpy()
+            self.coef_ = beta
 
         return self

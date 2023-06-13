@@ -1,3 +1,10 @@
+"""
+Base class for all estimators in cvxreg.
+"""
+
+# Author: Zhiqiang Liao @ Aalto University <zhiqiang.liao@aalto.fi>
+# License: MIT
+
 import numpy as np
 import inspect
 
@@ -51,6 +58,34 @@ class BaseEstimator:
                 out.update((key + "__" + k, val) for k, val in deep_items)
             out[key] = value
         return out
+    
+    def set_params(self, **params):
+        """Set the parameters of this estimator.
+
+        Parameters
+        ----------
+        **params : dict
+            Estimator parameters.
+
+        Returns
+        -------
+        self : object
+            Estimator instance.
+        """
+        if not params:
+            # Simple optimization to gain speed (inspect is slow)
+            return self
+        valid_params = self.get_params(deep=True)
+        
+        for key, value in params.items():
+            if key not in valid_params:
+                raise ValueError(
+                    "Invalid parameter %s for estimator %s. "
+                    "Check the list of available parameters "
+                    "with `estimator.get_params().keys()`." %
+                    (key, self.__class__.__name__))
+            setattr(self, key, value)
+        return self
 
     def _validate_data(self, 
                        x="novalidattion", 

@@ -1,3 +1,6 @@
+"""
+constant for string options
+"""
 
 # Shape of the function
 convex = "convex"

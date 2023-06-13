@@ -1,17 +1,22 @@
-from numbers import Real
+"""
+Penalized Convex Regression (PCR) model.
+"""
 
+# Author: Zhiqiang Liao @ Aalto University <zhiqiang.liao@aalto.fi>
+# License: MIT
+
+from numbers import Real
 import numpy as np
 import pandas as pd
-from pystoned import CNLS
-from pyomo.environ import Objective, minimize
+from cvxpy import Variable, sum_squares
 
-from ._base import CRModel
-from ..constant import convex, concave, OPT_DEFAULT, OPT_LOCAL
-from ..utils._pyomo_opt import check_optimization_status, optimize_model
+from ._base import CRModel, _calculate_matrix_A, _calculate_matrix_B, _shape_constraint
+from ..constant import convex, concave
+from ..solvers._cvxpy_opt import solve_model
 from ..utils._param_check import Interval, StrOptions
 
 
-class PCR(CRModel, CNLS.CNLS):
+class PCR(CRModel):
     """
     Penalized Convex Regression (PCR) model.
 
@@ -59,57 +64,45 @@ class PCR(CRModel, CNLS.CNLS):
     def fit(self, x, y):
         """Optimize the function by requested method
 
-        Args:
-            email (string): The email address for remote optimization. It will optimize locally if OPT_LOCAL is given.
-            solver (string): The solver chosen for optimization. It will optimize with default solver if OPT_DEFAULT is given.
+        parameters
+        ----------
+        x : ndarray of shape (n, d) data.
+        y : ndarray of shape (n,) target values.
+
+        Returns
+        -------
+        self : returns an instance of self
         """
         self._validate_params()
         x, y = self._validate_data(x, y)
 
-        if self.shape == convex:
-            fun_var = CNLS.FUN_COST
-        elif self.shape == concave:
-            fun_var = CNLS.FUN_PROD
-        if self.fit_intercept:
-            intercept = CNLS.RTS_VRS
-        else:
-            intercept = CNLS.RTS_CRS
-        CNLS.CNLS.__init__(self, y, x, z=None, cet=CNLS.CET_ADDI, fun=fun_var, rts=intercept)
+        # calculate the matrix A and B
+        n, d = x.shape
+        A = _calculate_matrix_A(n)
+        B = _calculate_matrix_B(x, n, d)
 
-        # new objective function
-        self.__model__.objective.deactivate()
-        self.__model__.new_objective = Objective(rule=self.__new_objective_rule(),
-                                                     sense=minimize,
-                                                     doc='objective function')
+        # interface with cvxpy
+        Xi = Variable(n*d)
+        theta = Variable(n)
+        objective = 0.5*sum_squares(y - theta) + self.c*sum_squares(Xi)
 
-        if self.positive:
-            self.__model__.beta.setlb(0.0)
-        else:
-            self.__model__.beta.setlb(None)
+        # add shape constraint
+        constraint = [_shape_constraint(A, B, Xi, theta, n, d, shape=self.shape, positive=self.positive)]
 
-                # optimize the model with solver
-        self.problem_status, self.optimization_status = optimize_model(
-            self.__model__, self.email, self.solver)
-        check_optimization_status(self.optimization_status)
+        # optimize the model with solver
+        self.solution = solve_model(objective, constraint, self.solver)
+        
+        Xi_val = Xi.value.reshape(n,d)
+        theta_val = theta.value
 
-        alpha = list(self.__model__.alpha[:].value)
-
-        beta = np.asarray([i + tuple([j]) for i, j in zip(list(self.__model__.beta),
-                                                          list(self.__model__.beta[:, :].value))])
-        beta = pd.DataFrame(beta, columns=['Name', 'Key', 'Value'])
-        beta = beta.pivot(index='Name', columns='Key', values='Value')
+        alpha = list([theta_val[i] - Xi_val[i,:]@x[i,:] for i in range(n)])
+        beta = Xi_val
     
         if self.fit_intercept:
-            self.intercept_ = alpha
-            self.coef_ = beta.to_numpy()
+            self.intercept_ = np.array(alpha)
+            self.coef_ = beta
         else:
             self.intercept_ = 0.0
-            self.coef_ = beta.to_numpy()
+            self.coef_ = beta
+
         return self
-    
-    def __new_objective_rule(self):
-        """return new objective function"""
-        def objective_rule(model):
-            return sum(model.epsilon[i] ** 2 for i in model.I) \
-                + self.c * sum(model.beta[i, j] ** 2 for i in model.I for j in model.J)
-        return objective_rule

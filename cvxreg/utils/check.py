@@ -1,3 +1,10 @@
+"""
+Data input check.
+"""
+
+# Author: Zhiqiang Liao @ Aalto University <zhiqiang.liao@aalto.fi>
+# License: MIT
+
 import numpy as np
 
 def _num_samples(x):
@@ -86,3 +93,21 @@ def check_x_y(x, y):
     check_consistent_length(x, y)
 
     return x, y
+
+def check_ndarray(x, n, d):
+    """Input check for x.
+    Check x for consistent length and shape.
+
+    Parameters
+    ----------
+    x : {ndarray, list}
+        Input data.
+    n : int
+        Number of samples.
+    d : int
+        Number of features.
+    """
+    x = check_array(x)
+    if x.shape != (n, d):
+        raise ValueError("x should be a {}x{} array, got an array of shape {} instead.".format(n, d, x.shape))
+    return x

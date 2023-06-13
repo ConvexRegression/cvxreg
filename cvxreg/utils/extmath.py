@@ -1,3 +1,10 @@
+"""
+Extra math functions
+"""
+
+# Author: Zhiqiang Liao @ Aalto University <zhiqiang.liao@aalto.fi>
+# License: MIT
+
 import numpy as np
 
 from ..constant import convex, concave

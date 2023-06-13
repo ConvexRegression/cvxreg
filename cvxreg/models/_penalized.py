@@ -7,12 +7,11 @@ Penalized Convex Regression (PCR) model.
 
 from numbers import Real
 import numpy as np
-import pandas as pd
 from cvxpy import Variable, sum_squares
 
 from ._base import CRModel, _calculate_matrix_A, _calculate_matrix_B, _shape_constraint
 from ..constant import convex, concave
-from ..solvers._cvxpy_opt import solve_model
+from ..solvers.cvxpy_opt import solve_model
 from ..utils._param_check import Interval, StrOptions
 
 

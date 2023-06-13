@@ -7,13 +7,12 @@ Base convex regression models
 
 from abc import ABCMeta, abstractmethod
 import numpy as np
-import pandas as pd
 from cvxpy import Variable, sum_squares
 
 from ..base import BaseEstimator
+from ..solvers.cvxpy_opt import solve_model
 from ..constant import convex, concave
 from ..utils.extmath import yhat
-from ..solvers._cvxpy_opt import solve_model
 from ..utils._param_check import StrOptions
 from ..utils.check import check_ndarray
 

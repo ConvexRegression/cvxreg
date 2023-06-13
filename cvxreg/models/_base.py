@@ -35,16 +35,16 @@ def _calculate_matrix_B(x, n, d):
             if i != j:
                 res[k, i*d:(i+1)*d] = x[j,:] - x[i,:]
                 k += 1
-    return res
+    return -res
 
 def _shape_constraint(A, B, Xi, theta, n, d, shape=convex, positive=False):
     check_ndarray(A, n*(n-1), n)
     check_ndarray(B, n*(n-1), n*d)
 
     if shape == convex:
-        cons_shape = A @ theta >= B @ Xi
+        cons_shape = A @ theta + B @ Xi >= 0
     elif shape == concave:
-        cons_shape = A @ theta <= B @ Xi
+        cons_shape = A @ theta + B @ Xi <= 0
 
     if positive:
         cons_positive = Xi >= 0.0
@@ -103,7 +103,6 @@ class CR(CRModel):
         "shape": [StrOptions({convex, concave})],
         'fit_intercept': ['boolean'],
         'positive': ['boolean'],
-        'email': [None, str],
         'solver': [str]
     }
     
@@ -112,13 +111,11 @@ class CR(CRModel):
         shape=convex, 
         positive=False, 
         fit_intercept=True, 
-        email=None, 
-        solver='mosek'
+        solver='ecos'
     ):
         self.shape = shape
         self.fit_intercept = fit_intercept
         self.positive = positive
-        self.email = email
         self.solver = solver
 
     def fit(self, x, y):

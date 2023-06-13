@@ -40,7 +40,6 @@ class PCR(CRModel):
         "shape": [StrOptions({convex, concave})],
         'fit_intercept': ['boolean'],
         'positive': ['boolean'],
-        'email': [None, str],
         'solver': [str]
     }
 
@@ -50,14 +49,12 @@ class PCR(CRModel):
         shape=convex, 
         positive=False, 
         fit_intercept=True,
-        email=None, 
-        solver='mosek'
+        solver='ecos'
     ):
         self.c = c
         self.shape = shape
         self.fit_intercept = fit_intercept
         self.positive = positive
-        self.email = email
         self.solver = solver
 
     def fit(self, x, y):

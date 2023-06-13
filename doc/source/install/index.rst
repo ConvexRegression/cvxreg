@@ -19,7 +19,7 @@ We use the default solver `ECOS <https://www.embotech.com/ECOS>`_ in cvxreg. To 
 
 ::
 
-    model = models.CR(solver='OSQP')
+    model = models.CR(solver='osqp')
 
 Install with commercial solvers
 -------------------------------

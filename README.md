@@ -2,11 +2,11 @@
 [![Documentation Status](https://readthedocs.org/projects/cvxreg/badge/?version=latest)](https://cvxreg.readthedocs.io/en/latest/?badge=latest)
 [![PyPI downloads](https://img.shields.io/pypi/dm/cvxreg.svg?maxAge=21600)](https://pypistats.org/packages/cvxreg)
 
-**cvxreg** is a Python package for machine learing with convex regression models built on [`pyStoNED`](https://github.com/ds2010/pyStoNED). 
+**cvxreg** is a Python package for machine learing with convex regression models built on [`CVXPY`](https://www.cvxpy.org). 
 
 The core aims of this package are:
 * make convex regression models "easy to call" from python,
-* interface with [`pyStoNED`](https://github.com/ds2010/pyStoNED),
+* interface with [`CVXPY`](https://www.cvxpy.org),
 * focus on a "machine learning" perspective, i.e.: predictive task, hyper-parameters should be obtained by a data-driven method such as cross-validation.
 
 ## Installation

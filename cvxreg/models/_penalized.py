@@ -11,7 +11,7 @@ from cvxpy import Variable, sum_squares
 
 from ._base import CRModel, _calculate_matrix_A, _calculate_matrix_B, _shape_constraint
 from ..constant import convex, concave
-from ..solvers.cvxpy_opt import solve_model
+from ..opt.cvxpy_opt import solve_model
 from ..utils._param_check import Interval, StrOptions
 
 

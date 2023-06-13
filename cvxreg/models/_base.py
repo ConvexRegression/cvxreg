@@ -10,7 +10,7 @@ import numpy as np
 from cvxpy import Variable, sum_squares
 
 from ..base import BaseEstimator
-from ..solvers.cvxpy_opt import solve_model
+from ..opt.cvxpy_opt import solve_model
 from ..constant import convex, concave
 from ..utils.extmath import yhat
 from ..utils._param_check import StrOptions

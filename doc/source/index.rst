@@ -43,3 +43,9 @@ For example, the following code estimates a convex function with CR model:
    :hidden:
 
    install/index
+
+.. toctree::
+   :maxdepth: 3
+   :hidden:
+
+   examples/index

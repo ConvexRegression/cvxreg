@@ -1,6 +1,6 @@
-==================================================================
-Predictive accuracy comparison of different machine learning models
-==================================================================
+===================
+Predictive accuracy
+===================
 
 We compare the predictive accuracy of convex regression with several different machine learning models for regression. The models are:
 
@@ -81,4 +81,4 @@ Example: Estimating convex function and calculate mean squared errors
     mse = np.mean((y_te - y_hat)**2)
     print('Mean squared error of support vector regression: %.4f' % mse) # MSE = 0.042
 
-
+We concude that the penalized convex regression model has the best predictive accuracy.

@@ -4,8 +4,8 @@ Examples
 
 We provide a few examples of how to use the package.
 
-Comparison of convex regression with other methods
---------------------------------------------------
+Comparison and prediction
+-------------------------
 
 .. toctree::
     :maxdepth: 1

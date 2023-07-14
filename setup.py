@@ -28,6 +28,7 @@ setup_args = dict(
 )
 
 install_requires = [
+    'python>=3.7',
     'numpy>=1.19.2',
     'pandas>=1.1.3',
     'scipy>=1.5.2',

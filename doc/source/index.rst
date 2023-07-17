@@ -8,8 +8,8 @@ Welcome to cvxreg's documentation!
 
 **Convex Regression for machine learning.**
 
-cvxreg is an open source Python package implementing convex regression models for machine learning. It is built on top of the `pyStoNED <https://pypi.org/project/pystoned/>`_ package for Convex Nonparametric Least Square estimator. 
-It lets you implement the convex regression models in a few lines of code. It is well documented and tested. It is compatible with Python 3.6+ and runs on Linux, MacOS X and Windows.
+cvxreg is an open source Python package implementing convex regression models for machine learning. It is built on top of the `CVXPY <https://www.cvxpy.org/>`_ package for convex optimization problems. 
+It lets you implement the convex regression models in a few lines of code. It is well documented and tested. It is compatible with Python 3.7+ and runs on Linux, MacOS X and Windows.
 
 For example, the following code estimates a convex function with CR model:
 

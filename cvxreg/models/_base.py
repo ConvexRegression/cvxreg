@@ -7,6 +7,7 @@ Base convex regression models
 
 from abc import ABCMeta, abstractmethod
 import numpy as np
+from scipy import sparse
 from cvxpy import Variable, sum_squares
 
 from ._cvxpy_opt import solve_model
@@ -28,18 +29,26 @@ def _calculate_matrix_A(n):
     return res
 
 def _calculate_matrix_B(x, n, d):
-    res = np.zeros((n*(n-1), n*d))
+    num_rows = n * (n - 1)
+    num_cols = n * d
+
+    row_indices = []
+    col_indices = []
+    data = []
+
     k = 0
     for i in range(n):
         for j in range(n):
             if i != j:
-                res[k, i*d:(i+1)*d] = x[j,:] - x[i,:]
+                row_indices.extend([k] * d)
+                col_indices.extend(range(i * d, (i + 1) * d))
+                data.extend(x[j, :] - x[i, :])
                 k += 1
-    return -res
 
-def _shape_constraint(A, B, Xi, theta, n, d, shape=convex, positive=False):
-    check_ndarray(A, n*(n-1), n)
-    check_ndarray(B, n*(n-1), n*d)
+    sparse_matrix = sparse.coo_matrix((data, (row_indices, col_indices)), shape=(num_rows, num_cols))
+    return -sparse_matrix
+
+def _shape_constraint(A, B, Xi, theta, shape=convex, positive=False):
 
     if shape == convex:
         cons_shape = A @ theta + B @ Xi >= 0
@@ -145,7 +154,7 @@ class CR(CRModel):
         objective = 0.5*sum_squares(y - theta)
 
         # add shape constraint
-        constraint = [_shape_constraint(A, B, Xi, theta, n, d, shape=self.shape, positive=self.positive)]
+        constraint = [_shape_constraint(A, B, Xi, theta, shape=self.shape, positive=self.positive)]
 
         # optimize the model with solver
         self.solution = solve_model(objective, constraint, self.solver)

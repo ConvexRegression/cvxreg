@@ -15,7 +15,7 @@ from ..base import BaseEstimator
 from ..constant import convex, concave
 from ..utils.extmath import yhat
 from ..utils._param_check import StrOptions
-from ..utils.check import check_ndarray
+
 
 def _calculate_matrix_A(n):
     res = np.zeros((n*(n-1), n))

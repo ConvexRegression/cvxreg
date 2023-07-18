@@ -83,7 +83,7 @@ class PCR(CRModel):
         objective = 0.5*sum_squares(y - theta) + self.c*sum_squares(Xi)
 
         # add shape constraint
-        constraint = [_shape_constraint(A, B, Xi, theta, n, d, shape=self.shape, positive=self.positive)]
+        constraint = [_shape_constraint(A, B, Xi, theta, shape=self.shape, positive=self.positive)]
 
         # optimize the model with solver
         self.solution = solve_model(objective, constraint, self.solver)

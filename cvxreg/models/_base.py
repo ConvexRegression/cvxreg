@@ -58,9 +58,9 @@ def _shape_constraint(A, B, Xi, theta, shape=convex, positive=False):
     if positive:
         cons_positive = Xi >= 0.0
     else:
-        return cons_shape
+        return [cons_shape]
 
-    return cons_shape, cons_positive
+    return [cons_shape, cons_positive]
 
 class CRModel(BaseEstimator, metaclass=ABCMeta):
     """
@@ -154,7 +154,7 @@ class CR(CRModel):
         objective = 0.5*sum_squares(y - theta)
 
         # add shape constraint
-        constraint = [_shape_constraint(A, B, Xi, theta, shape=self.shape, positive=self.positive)]
+        constraint = _shape_constraint(A, B, Xi, theta, shape=self.shape, positive=self.positive)
 
         # optimize the model with solver
         self.solution = solve_model(objective, constraint, self.solver)

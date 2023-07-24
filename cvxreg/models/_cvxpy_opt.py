@@ -20,25 +20,28 @@ def solve_model(objective, constraints, solver):
 
 
 def check_installed_solver(solver):
-    if solver.upper() not in installed_solvers():
+    """Check if the solver is installed.
+    """
+    SOLVER = solver.upper()
+    if SOLVER not in installed_solvers():
         raise ValueError("The solver %s is not installed." % solver)
     
-    if solver == 'ecos':
+    if SOLVER == 'ECOS':
         return ECOS
-    elif solver == 'mosek':
+    elif SOLVER == 'MOSEK':
         return MOSEK
-    elif solver == 'osqp':
+    elif SOLVER == 'OSQP':
         return OSQP
-    elif solver == 'scs':
+    elif SOLVER == 'SCS':
         return SCS
-    elif solver == 'cvxopt':
+    elif SOLVER == 'CVXOPT':
         return CVXOPT
-    elif solver == 'gurobi':
+    elif SOLVER == 'GUROBI':
         return GUROBI
-    elif solver == 'cplex':
+    elif SOLVER == 'CPLEX':
         return CPLEX
-    elif solver == 'copt':
+    elif SOLVER == 'COPT':
         return COPT
     else:
-        return None
+        raise ValueError("The solver %s is not installed." % SOLVER)
     

@@ -18,6 +18,7 @@ setup_args = dict(
     download_url='https://pypi.org/project/cvxreg/',
     include_package_data=True,
     zip_safe=False,
+    python_requires='>=3.7',
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Intended Audience :: Science/Research',
@@ -28,7 +29,6 @@ setup_args = dict(
 )
 
 install_requires = [
-    'python>=3.7',
     'numpy>=1.19.2',
     'pandas>=1.1.3',
     'scipy>=1.5.2',

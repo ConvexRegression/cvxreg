@@ -14,8 +14,8 @@ The optimization problem is:
 
 .. math::
 
-    \min_{\beta, \alpha, \epsilon} & \sum_{i=1}^n \epsilon_i^2
-    s.t. & y_i = \alpha_i + \beta_i * x_i + \epsilon_i
+    \min_{\beta, \alpha, \epsilon} & \sum_{i=1}^n \epsilon_i^2 \\\\
+    s.t. & y_i = \alpha_i + \beta_i * x_i + \epsilon_i \\\\
          & \alpha_i + \beta_i * x_i \geq \alpha_j + \beta_j * x_i,  \forall j != i
 
 where :math:`x_i` is the i-th sample, :math:`y_i` is the i-th target value, :math:`\alpha_i` is the intercept of the i-th sample, 
@@ -27,7 +27,7 @@ Parameters
 ======================  =======
 Parameters              Options
 ======================  =======
-:code:`shape`           Selection: {'convex', 'concave'}, default: 'convex'
+:code:`shape`           Selection: {:code:`convex`, :code:`concave`}, default: :code:`convex`
 
                         The shape of the function to be fitted.
 :code:`positive`        Boolean, default: False
@@ -36,9 +36,9 @@ Parameters              Options
 :code:`fit_intercept`   Boolean, default: True
 
                         Whether to fit the intercept.
-:code:`solver`          Selection: {'ecos', 'osqp', 'scs', 'cvxopt','mosek', 'gurobi', 'cplex', 'copt'}, default: 'ecos'
+:code:`solver`          Selection: {:code:`ecos`, :code:`osqp`, :code:`scs`, :code:`cvxopt`, :code:`mosek`, :code:`gurobi`, :code:`cplex`, :code:`copt`}, default: :code:`ecos`
 
-                        The solver to use. There three open-source solvers: 'ecos', 'osqp', 'scs', and five commercial solvers: 'cvxopt', 'mosek', 'gurobi', 'cplex', 'copt'.
+                        The solver to use. There three open-source solvers: :code:`ecos`, :code:`osqp`, :code:`scs`, and five commercial solvers: :code:`cvxopt`, :code:`mosek`, :code:`gurobi`, :code:`cplex`, :code:`copt`.
 
                         To use commercial solvers, you need to install them first, see :ref:`install`.
 ======================  =======
@@ -92,5 +92,4 @@ Methods               Type
                       X of shape (n_samples, n_features)
 ====================  =======
 
-See examples: :ref:`Examples <comparison>`.
-
+See examples: :ref:`examples`.

@@ -3,6 +3,7 @@ cvxreg.models.PCR
 ====================
 
 .. code:: python
+
     cvxreg.models.PCR(*, c=1.0, shape='convex', positive=False, fit_intercept=True, solver='ecos')
 
 Penalized Convex Regression (PCR) model.
@@ -12,12 +13,14 @@ PCR fit a convex function with coefficients beta = (beta_1, ..., beta_n, where b
 The optimization problem is:
 
 .. math::
-    minimize sum_{i=1}^n epsilon_i^2 + c * sum_{i=1}^n ||beta_i||_2^2
-    subject to y_i = alpha_i + beta_i * x_i + epsilon_i
-               alpha_i + beta_i * x_i >= alpha_j + beta_j * x_i for all j != i
 
-where :math:`x_i` is the i-th sample, :math:`y_i` is the i-th target value, :math:`alpha_i` is the intercept of the i-th sample, 
-:math:`beta_i` is the coefficient of the i-th sample, :math:`epsilon_i` is the error of the i-th sample, and :math:`c` is the regularization parameter.
+    \minimize \sum_{i=1}^n \epsilon_i^2 + c * \sum_{i=1}^n \|\beta_i\|_2^2
+
+    s.t. y_i = \alpha_i + \beta_i * x_i + \epsilon_i
+               \alpha_i + \beta_i * x_i \geq \alpha_j + \beta_j * x_i \forall j != i
+
+where :math:`x_i` is the i-th sample, :math:`y_i` is the i-th target value, :math:`\alpha_i` is the intercept of the i-th sample, 
+:math:`\beta_i` is the coefficient of the i-th sample, :math:`\epsilon_i` is the error of the i-th sample, and :math:`c` is the regularization parameter.
 
 Parameters
 ----------
@@ -38,18 +41,22 @@ Parameters                        Options
                                   To use commercial solvers, you need to install them first, see :ref:`install`.
 ====================              =======
 
+Attributes
+----------
+
 ====================  =======
 Attributes            Type
 ====================  =======
-:code:`coef_`         numpy.ndarray
+:code:`coef_`         numpy.ndarray <br />
                       The coefficients of the fitted function.
-:code:`intercept_`    numpy.ndarray
+:code:`intercept_`    numpy.ndarray <br />
                       The intercept of the fitted function.
 ====================  =======
 
 Examples
 --------
 .. code:: python
+
     import numpy as np
     from cvxreg.models import PCR
     X = np.array([[1, 1], [1, 2], [2, 2]])
@@ -69,14 +76,12 @@ Methods
 ====================  =======
 Methods               Type
 ====================  =======
-:code:`fit(X, y)`     Fit model with solver.
-:code:`predict(X)`    Predict using the convex regression model.
+:code:`fit(X, y)`     Fit model with solver. <br />
+                      X of shape (n_samples, n_features) <br />
+                      y of shape (n_samples,)
+
+:code:`predict(X)`    Predict using the convex regression model. <br />
+                      X of shape (n_samples, n_features)
 ====================  =======
 
-.. code:: python
-    fit(X, y)
-
-.. code:: python
-    predict(X)
-
-See examples: :ref:`examples`.
+See examples: :ref:`Examples <examples>`.

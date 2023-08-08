@@ -14,11 +14,9 @@ The optimization problem is:
 
 .. math::
 
-    \min_{\beta, \alpha, \epsilon} \sum_{i=1}^n \epsilon_i^2 + c * \sum_{i=1}^n \|\beta_i\|_2^2
-
-    s.t. y_i = \alpha_i + \beta_i * x_i + \epsilon_i
-
-               \alpha_i + \beta_i * x_i \geq \alpha_j + \beta_j * x_i \forall j != i
+    \min_{\beta, \alpha, \epsilon} & \sum_{i=1}^n \epsilon_i^2 + c * \sum_{i=1}^n \|\beta_i\|_2^2
+    s.t. & y_i = \alpha_i + \beta_i * x_i + \epsilon_i
+         & \alpha_i + \beta_i * x_i \geq \alpha_j + \beta_j * x_i,  \forall j != i
 
 where :math:`x_i` is the i-th sample, :math:`y_i` is the i-th target value, :math:`\alpha_i` is the intercept of the i-th sample, 
 :math:`\beta_i` is the coefficient of the i-th sample, :math:`\epsilon_i` is the error of the i-th sample, and :math:`c` is the regularization parameter.
@@ -26,27 +24,27 @@ where :math:`x_i` is the i-th sample, :math:`y_i` is the i-th target value, :mat
 Parameters
 ----------
 
-====================    =======
-Parameters              Options
-====================    =======
-:code:`c`               Float, default: 1.0. c must be non-negative Float, i.e. in :math:`[0, inf)`.
+======================    =======
+Parameters                Options
+======================    =======
+:code:`c`                 Float, default: 1.0. c must be non-negative Float, i.e. in :math:`[0, inf)`.
 
-                        The regularization parameter.
-:code:`shape`           Selection: {'convex', 'concave'}, default: 'convex'
+                          The regularization parameter.
+:code:`shape`             Selection: {'convex', 'concave'}, default: 'convex'
 
-                        The shape of the function to be fitted.
-:code:`positive`        Boolean, default: False
+                          The shape of the function to be fitted.
+:code:`positive`          Boolean, default: False
 
-                        Whether to constrain the coefficients to be positive.
-:code:`fit_intercept`   Boolean, default: True
+                          Whether to constrain the coefficients to be positive.
+:code:`fit_intercept`     Boolean, default: True
 
-                        Whether to fit the intercept.
-:code:`solver`          Selection: {'ecos', 'osqp', 'scs', 'cvxopt','mosek', 'gurobi', 'cplex', 'copt'}, default: 'ecos'
+                          Whether to fit the intercept.
+:code:`solver`            Selection: {'ecos', 'osqp', 'scs', 'cvxopt','mosek', 'gurobi', 'cplex', 'copt'}, default: 'ecos'
 
-                        The solver to use. There three open-source solvers: 'ecos', 'osqp', 'scs', and five commercial solvers: 'cvxopt', 'mosek', 'gurobi', 'cplex', 'copt'.
+                          The solver to use. There three open-source solvers: 'ecos', 'osqp', 'scs', and five commercial solvers: 'cvxopt', 'mosek', 'gurobi', 'cplex', 'copt'.
 
-                        To use commercial solvers, you need to install them first, see :ref:`install`.
-====================    =======
+                          To use commercial solvers, you need to install them first, see :ref:`install`.
+======================    =======
 
 Attributes
 ----------

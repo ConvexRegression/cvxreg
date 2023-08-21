@@ -5,27 +5,30 @@ Base functions for all datasets.
 # Author: Zhiqiang Liao @ Aalto University
 # License: MIT
 
-import sys
-from importlib import resources
-
 import os
 import numpy as np
 import pandas as pd
-import csv
+
+from sklearn.utils import Bunch
 
 cvxreg_data_path = os.path.dirname(os.path.abspath(__file__))
 
 def _open_text(data_file_name):
     return open(os.path.join(cvxreg_data_path, data_file_name), 'r')
 
-def load_csv_data(data_file_name):
-    """
-    Load data from a csv file.
+def _convert_to_dataframe(data, target, feature_names, target_names):
 
-    Parameters
-    ----------
-    data_file_name : string
-        The name of the csv file.
+    data_df = pd.DataFrame(data, columns=feature_names)
+    target_df = pd.DataFrame(target, columns=target_names)
+    combined_df = pd.concat([data_df, target_df], axis=1)
+    X = combined_df[feature_names]
+    y = combined_df[target_names]
+
+    return combined_df, X, y
+
+def load_elect_firms(return_X_y=False, as_frame=False):
+    """
+    Load the electricity dataset.
 
     Returns
     -------
@@ -33,58 +36,78 @@ def load_csv_data(data_file_name):
         The data matrix.
     target : ndarray of shape (n_samples,)
         The target vector.
+    target_names : ndarray of shape (n_targets,)
+        The names of the targets.
     """
+    data_file_name = 'data/electricityFirms.csv'
 
     with _open_text(data_file_name) as f:
-        data_file = csv.reader(f)
-        header = next(data_file)
-        n_samples = int(header[0])
-        n_features = int(header[1])
-        data = np.empty((n_samples, n_features))
-        target = np.empty((n_samples,))
-        for i, sample in enumerate(data_file):
-            data[i] = np.asarray(sample[:-1], dtype=np.float64)
-            target[i] = np.asarray(sample[-1], dtype=np.float64)
-
-    return data, target
-
-def load_electricity_firm(return_X_y, as_frame):
-    """
-    Load the electricity firm dataset.
-
-    This dataset has multiple inputs and multiple outputs.
-
-    ==============   ==============
-    Samples total    89
-    Dimensionality   3(both for input and output)
-    Features         real
-    Targets          real
-    ==============   ==============
-
-    Parameters
-    ----------
-    return_X_y : bool, default=False
-        If True, returns ``(data, target)`` instead of a Bunch object.
-    as_frame : bool, default=False
-        If True, the data is a pandas DataFrame including columns with
-        appropriate dtypes (numeric). The target is a pandas DataFrame or
-        Series depending on the number of target columns. If `return_X_y`
-        is True, then (`data`, `target`) will be pandas DataFrames or Series
-        as described above.
-    """
-
-    file_name = 'electricity_firm.csv'
-
-    data, target = load_csv_data(file_name)
-
-    feature_names = [
-        'Energy', 
-        'Length', 
-        'Customers', 
-        'OPEX', 
-        'CAPEX', 
-        'TOTEX',
-        ]
+        data_file = np.loadtxt(f, delimiter=',', skiprows=1)
     
+    feature_names = ['Energy', 'Length', 'Customers']
+
     frame = None
-    target_columns = None
+    target_names = ['OPEX', 'CAPEX', 'TOTEX']
+
+    data = data_file[:, -4:-1]
+    target = data_file[:, :-4]
+
+    if as_frame:
+        frame, data, target = _convert_to_dataframe(
+            data, target, feature_names, target_names
+        )
+   
+    if return_X_y:
+        return data, target
+    
+    return Bunch(
+        data=data,
+        target=target,
+        frame=frame,
+        feature_names=feature_names,
+        target_names=target_names,
+
+    )
+
+def load_41_firms(return_X_y=False, as_frame=False):
+    """
+    Load the 41 firms dataset.
+
+    Returns
+    -------
+    data : ndarray of shape (n_samples, n_features)
+        The data matrix.
+    target : ndarray of shape (n_samples,)
+        The target vector.
+    target_names : ndarray of shape (n_targets,)
+        The names of the targets.
+    """
+    data_file_name = 'data/41Firm.csv'
+
+    with _open_text(data_file_name) as f:
+        data_file = np.loadtxt(f, delimiter=',', skiprows=1)
+    
+    feature_names = ['capital', 'labour']
+
+    frame = None
+    target_names = ['output']
+
+    data = data_file[:, -2:]
+    target = data_file[:, 1]
+
+    if as_frame:
+        frame, data, target = _convert_to_dataframe(
+            data, target, feature_names, target_names
+        )
+   
+    if return_X_y:
+        return data, target
+    
+    return Bunch(
+        data=data,
+        target=target,
+        frame=frame,
+        feature_names=feature_names,
+        target_names=target_names,
+
+    )

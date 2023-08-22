@@ -1,5 +1,5 @@
 """
-Base functions for all datasets.
+Load datasets from the cvxreg data folder.
 """
 
 # Author: Zhiqiang Liao @ Aalto University

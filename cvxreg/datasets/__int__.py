@@ -2,7 +2,7 @@
 'cvxreg.datasets' is a module that provides functions to load datasets.
 """
 
-from ._base import (
+from ._load import (
     load_elect_firms,
     load_41_firms,
 )

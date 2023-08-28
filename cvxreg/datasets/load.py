@@ -26,7 +26,7 @@ def _convert_to_dataframe(data, target, feature_names, target_names):
 
     return combined_df, X, y
 
-def load_elect_firms(return_X_y=False, as_frame=False):
+def elect_firms(return_X_y=False, as_frame=False):
     """
     Load the electricity dataset.
 
@@ -69,7 +69,7 @@ def load_elect_firms(return_X_y=False, as_frame=False):
 
     )
 
-def load_41_firms(return_X_y=False, as_frame=False):
+def front_firms(return_X_y=False, as_frame=False):
     """
     Load the 41 firms dataset.
 

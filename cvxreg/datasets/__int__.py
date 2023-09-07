@@ -5,10 +5,12 @@
 from .load import (
     elect_firms,
     front_firms,
+    Boston_housing,
 )
 
 
 __all__ = [
     'elect_firms',
     'front_firms',
+    'Boston_housing',
 ]

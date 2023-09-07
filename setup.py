@@ -5,7 +5,7 @@ with open('README.md') as readme_file:
 
 setup_args = dict(
     name='cvxreg',
-    version='0.1.8',
+    version='0.1.9',
     description='A Python Package for Convex Regression',
     long_description_content_type="text/markdown",
     long_description=README,
@@ -32,7 +32,8 @@ install_requires = [
     'numpy>=1.19.2',
     'pandas>=1.1.3',
     'scipy>=1.5.2',
-    'cvxpy>=1.1.7'
+    'cvxpy>=1.1.7',
+    'scikit-learn>=0.23.2',
 ]
 
 if __name__ == '__main__':

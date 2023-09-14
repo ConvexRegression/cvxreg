@@ -20,7 +20,7 @@ For example, the following code estimates a convex function with CR model:
 
    # Generate data
    np.random.seed(0)
-   n, d, SNR = 50, 3, 3
+   n, d, SNR = 100, 3, 3
    x = np.random.uniform(low=-1, high=1, size=(n, d))
    y_true = np.linalg.norm(x, axis=1)**2 + 3
 
@@ -37,7 +37,7 @@ For example, the following code estimates a convex function with CR model:
    # print the intercept
    print(cr.intercept_)
    # predict the response
-   y_pred = cr.predict([[0.1, 0.2, 0.3]])
+   y_pred = cr.predict([[0.2, 0.3, 0.5]])
 
 .. toctree::
    :hidden:

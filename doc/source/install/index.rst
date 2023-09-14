@@ -20,7 +20,7 @@ We use the default solver `ECOS <https://www.embotech.com/ECOS>`_ in cvxreg. To 
 .. code-block:: python
 
     from cvxreg.models import CR
-    model = CR(solver='osqp')
+    model = CR()
 
 Install with commercial solvers
 -------------------------------

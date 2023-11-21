@@ -101,8 +101,6 @@ class CR(CRModel):
         Whether the estimated function is monotonic increasing or not.
     fit_intercept : boolean, optional (default=True)
         Whether to calculate the intercept for this model. If set to False, no intercept will be used in calculations.
-    email : string, optional (default=None)
-        The email address for remote optimization. It will optimize locally if None is given.
     solver : string, optional (default='mosek')
         The solver chosen for optimization. It will optimize with mosek solver if None is given.
     """

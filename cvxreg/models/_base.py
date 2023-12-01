@@ -101,8 +101,8 @@ class CR(CRModel):
         Whether the estimated function is monotonic increasing or not.
     fit_intercept : boolean, optional (default=True)
         Whether to calculate the intercept for this model. If set to False, no intercept will be used in calculations.
-    solver : string, optional (default='mosek')
-        The solver chosen for optimization. It will optimize with mosek solver if None is given.
+    solver : string, optional (default='ecos')
+        The solver chosen for optimization. It will optimize with ecos solver if None is given.
     """
 
 

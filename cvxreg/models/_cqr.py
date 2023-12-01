@@ -7,7 +7,7 @@ Convex Quantile Regression (CQR) model.
 
 from numbers import Real
 import numpy as np
-from cvxpy import Variable, sum_squares, abs
+from cvxpy import Variable, abs
 
 from ._base import CRModel, _calculate_matrix_A, _calculate_matrix_B, _shape_constraint
 from ._cvxpy_opt import solve_model
@@ -22,15 +22,15 @@ class CQR(CRModel):
     parameters
     ----------
     tau : float, optional (default=0.5)
-        The penalty parameter.
+        The specific percentiles or ''quantiles'', most often the median(tau=0.5).
     shape : string, optional (default=Convex)
         The shape of the estimated function. It can be either Convex or Concave.
     positive : boolean, optional (default=False)
         Whether the estimated function is monotonic increasing or not.
     fit_intercept : boolean, optional (default=True)
         Whether to calculate the intercept for this model. If set to False, no intercept will be used in calculations.
-    solver : string, optional (default='mosek')
-        The solver chosen for optimization. It will optimize with mosek solver if None is given.
+    solver : string, optional (default='ecos')
+        The solver chosen for optimization. It will optimize with ecos solver if None is given.
     """
 
     _parameter_constraints: dict = {

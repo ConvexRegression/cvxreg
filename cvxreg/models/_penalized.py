@@ -25,8 +25,8 @@ class PCR(CRModel):
         The penalty parameter.
     shape : string, optional (default=Convex)
         The shape of the estimated function. It can be either Convex or Concave.
-    positive : boolean, optional (default=False)
-        Whether the estimated function is monotonic increasing or not.
+    positive : boolean, optional (default=None)
+        Whether the estimated function is monotonic increasing, decreasing, or neither.
     fit_intercept : boolean, optional (default=True)
         Whether to calculate the intercept for this model. If set to False, no intercept will be used in calculations.
     solver : string, optional (default='ecos')
@@ -45,7 +45,7 @@ class PCR(CRModel):
         self, 
         c=1.0, 
         shape=convex, 
-        positive=False, 
+        positive=None, 
         fit_intercept=True,
         solver='ecos'
     ):

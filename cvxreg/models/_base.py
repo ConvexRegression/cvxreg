@@ -48,7 +48,7 @@ def _calculate_matrix_B(x, n, d):
     sparse_matrix = sparse.coo_matrix((data, (row_indices, col_indices)), shape=(num_rows, num_cols))
     return -sparse_matrix
 
-def _shape_constraint(A, B, Xi, theta, shape=convex, positive=False):
+def _shape_constraint(A, B, Xi, theta, shape=convex, positive=None):
 
     if shape == convex:
         cons_shape = A @ theta + B @ Xi >= 0
@@ -57,6 +57,8 @@ def _shape_constraint(A, B, Xi, theta, shape=convex, positive=False):
 
     if positive:
         cons_positive = Xi >= 0.0
+    elif positive is False:
+        cons_positive = Xi <= 0.0
     else:
         return [cons_shape]
 
@@ -97,8 +99,8 @@ class CR(CRModel):
     ----------
     shape : string, optional (default=Convex)
         The shape of the estimated function. It can be either Convex or Concave.
-    positive : boolean, optional (default=False)
-        Whether the estimated function is monotonic increasing or not.
+    positive : boolean, optional (default=None)
+        Whether the estimated function is monotonic increasing, decreasing, or neither.
     fit_intercept : boolean, optional (default=True)
         Whether to calculate the intercept for this model. If set to False, no intercept will be used in calculations.
     solver : string, optional (default='ecos')
@@ -116,7 +118,7 @@ class CR(CRModel):
     def __init__(
         self, 
         shape=convex, 
-        positive=False, 
+        positive=None, 
         fit_intercept=True, 
         solver='ecos'
     ):

@@ -13,9 +13,21 @@ concave = "concave"
 Concave: concave funciton.
 """
 
+# Monotonicity of the function
+increasing = "increasing"
+"""
+Monotonic increasing: the function is non-decreasing.
+"""
+decreasing = "decreasing"   
+"""
+Monotonic decreasing: the function is non-increasing.
+"""
+
 FUN_Categories = {
     convex: "convex function",
-    concave: "concave funciton"
+    concave: "concave funciton",
+    increasing: "monotonic increasing function",
+    decreasing: "monotonic decreasing function" 
 }
 
 # Optimization

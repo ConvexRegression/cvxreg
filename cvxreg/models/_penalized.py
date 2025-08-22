@@ -11,7 +11,7 @@ from cvxpy import Variable, sum_squares
 
 from ._base import CRModel, _calculate_matrix_A, _calculate_matrix_B, _shape_constraint
 from ._cvxpy_opt import solve_model
-from ..constant import convex, concave
+from ..constant import convex, concave, increasing, decreasing
 from ..utils._param_check import Interval, StrOptions
 
 
@@ -25,7 +25,7 @@ class PCR(CRModel):
         The penalty parameter.
     shape : string, optional (default=Convex)
         The shape of the estimated function. It can be either Convex or Concave.
-    positive : boolean, optional (default=None)
+    monotonic : string, optional (default=None)
         Whether the estimated function is monotonic increasing, decreasing, or neither.
     fit_intercept : boolean, optional (default=True)
         Whether to calculate the intercept for this model. If set to False, no intercept will be used in calculations.
@@ -37,7 +37,7 @@ class PCR(CRModel):
         "c": [Interval(Real, 0, None)],
         "shape": [StrOptions({convex, concave})],
         'fit_intercept': ['boolean'],
-        'positive': ['boolean'],
+        'monotonic': [StrOptions({increasing, decreasing}), None],
         'solver': [str]
     }
 
@@ -45,14 +45,14 @@ class PCR(CRModel):
         self, 
         c=1.0, 
         shape=convex, 
-        positive=None, 
+        monotonic=None, 
         fit_intercept=True,
         solver='ecos'
     ):
         self.c = c
         self.shape = shape
         self.fit_intercept = fit_intercept
-        self.positive = positive
+        self.monotonic = monotonic
         self.solver = solver
 
     def fit(self, x, y):
@@ -81,7 +81,7 @@ class PCR(CRModel):
         objective = 0.5*sum_squares(y - theta) + self.c*sum_squares(Xi)
 
         # add shape constraint
-        constraint = _shape_constraint(A, B, Xi, theta, shape=self.shape, positive=self.positive)
+        constraint = _shape_constraint(A, B, Xi, theta, shape=self.shape, monotonic=self.monotonic)
 
         # optimize the model with solver
         self.solution = solve_model(objective, constraint, self.solver)

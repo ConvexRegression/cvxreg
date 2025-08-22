@@ -12,7 +12,7 @@ from cvxpy import Variable, sum_squares
 
 from ._cvxpy_opt import solve_model
 from ..base import BaseEstimator
-from ..constant import convex, concave
+from ..constant import convex, concave, increasing, decreasing
 from ..utils.extmath import yhat
 from ..utils._param_check import StrOptions
 
@@ -48,21 +48,21 @@ def _calculate_matrix_B(x, n, d):
     sparse_matrix = sparse.coo_matrix((data, (row_indices, col_indices)), shape=(num_rows, num_cols))
     return -sparse_matrix
 
-def _shape_constraint(A, B, Xi, theta, shape=convex, positive=None):
+def _shape_constraint(A, B, Xi, theta, shape=convex, monotonic=None):
 
     if shape == convex:
         cons_shape = A @ theta + B @ Xi >= 0
     elif shape == concave:
         cons_shape = A @ theta + B @ Xi <= 0
 
-    if positive:
-        cons_positive = Xi >= 0.0
-    elif positive is False:
-        cons_positive = Xi <= 0.0
+    if monotonic == increasing:
+        cons_monotonic = Xi >= 0.0
+    elif monotonic == decreasing:
+        cons_monotonic = Xi <= 0.0
     else:
         return [cons_shape]
 
-    return [cons_shape, cons_positive]
+    return [cons_shape, cons_monotonic]
 
 class CRModel(BaseEstimator, metaclass=ABCMeta):
     """
@@ -99,7 +99,7 @@ class CR(CRModel):
     ----------
     shape : string, optional (default=Convex)
         The shape of the estimated function. It can be either Convex or Concave.
-    positive : boolean, optional (default=None)
+    monotonic : string, optional (default=None)
         Whether the estimated function is monotonic increasing, decreasing, or neither.
     fit_intercept : boolean, optional (default=True)
         Whether to calculate the intercept for this model. If set to False, no intercept will be used in calculations.
@@ -111,20 +111,20 @@ class CR(CRModel):
     _parameter_constraints: dict = {
         "shape": [StrOptions({convex, concave})],
         'fit_intercept': ['boolean'],
-        'positive': ['boolean'],
+        'monotonic': [StrOptions({increasing, decreasing}), None],
         'solver': [str]
     }
     
     def __init__(
         self, 
         shape=convex, 
-        positive=None, 
+        monotonic=None, 
         fit_intercept=True, 
         solver='ecos'
     ):
         self.shape = shape
         self.fit_intercept = fit_intercept
-        self.positive = positive
+        self.monotonic = monotonic
         self.solver = solver
 
     def fit(self, x, y):
@@ -154,7 +154,7 @@ class CR(CRModel):
         objective = 0.5*sum_squares(y - theta)
 
         # add shape constraint
-        constraint = _shape_constraint(A, B, Xi, theta, shape=self.shape, positive=self.positive)
+        constraint = _shape_constraint(A, B, Xi, theta, shape=self.shape, monotonic=self.monotonic)
 
         # optimize the model with solver
         self.solution = solve_model(objective, constraint, self.solver)

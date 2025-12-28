@@ -100,3 +100,103 @@ class PCR(CRModel):
             self.coef_ = beta
 
         return self
+    
+class CSVR(CRModel):
+    """
+    Constrained Support Vector Convex Regression (CSVR) model.
+
+    parameters
+    ----------
+    shape : string, optional (default=Convex)
+        The shape of the estimated function. It can be either Convex or Concave.
+    c : float, optional (default=1.0)
+        The penalty parameter.
+    epsilon : float, optional (default=0.1)
+        The epsilon-insensitive parameter.
+    monotonic : string, optional (default=None)
+        Whether the estimated function is monotonic increasing, decreasing, or neither.
+    fit_intercept : boolean, optional (default=True)
+        Whether to calculate the intercept for this model. If set to False, no intercept will be used in calculations.
+    solver : string, optional (default='ecos')
+        The solver chosen for optimization. It will optimize with ecos solver if None is given.
+    """
+
+    _parameter_constraints: dict = {
+        "shape": [StrOptions({convex, concave})],
+        "c": [Interval(Real, 0, None)],
+        "epsilon": [Interval(Real, 0, None)],
+        'fit_intercept': ['boolean'],
+        'monotonic': [StrOptions({increasing, decreasing}), None],
+        'solver': [str]
+    }
+
+    def __init__(
+        self, 
+        shape=convex, 
+        c=1.0, 
+        epsilon=0.1,
+        monotonic=None, 
+        fit_intercept=True, 
+        solver='ecos'
+    ):
+        self.shape = shape
+        self.c = c
+        self.epsilon = epsilon
+        self.fit_intercept = fit_intercept
+        self.monotonic = monotonic
+        self.solver = solver
+
+    def fit(self, x, y):
+        """fit the model with solver
+
+        parameters
+        ----------
+        x : ndarray of shape (n, d) data.
+        y : ndarray of shape (n,) target values.
+
+        Returns
+        -------
+        self : returns an instance of self
+                Fitted model.
+        """
+        self._validate_params()
+        x, y = self._validate_data(x, y)
+
+        # calculate the matrix A and B
+        n, d = x.shape
+        A = _calculate_matrix_A(n)
+        B = _calculate_matrix_B(x, n, d)
+
+        # interface with cvxpy
+        Xi = Variable(n*d)
+        theta = Variable(n)
+        ksia = Variable(n, nonneg=True)
+        ksib = Variable(n, nonneg=True)
+        objective = 0.5*sum_squares(Xi) + self.c*sum(ksia + ksib)
+
+        # add epsilon-insensitive constraint
+        constraints = [
+            theta - y <= self.epsilon + ksia,
+            y - theta <= self.epsilon + ksib
+        ]
+
+        # add shape constraint
+        constraints += _shape_constraint(A, B, Xi, theta, shape=self.shape, monotonic=self.monotonic)
+
+        # optimize the model with solver
+        self.solution = solve_model(objective, constraints, self.solver)
+
+        Xi_val = Xi.value.reshape(n,d)
+        theta_val = theta.value
+
+        alpha = list([theta_val[i] - Xi_val[i,:]@x[i,:] for i in range(n)])
+        beta = Xi_val
+
+        if self.fit_intercept:
+            self.intercept_ = np.array(alpha)
+            self.coef_ = beta
+        else:
+            self.intercept_ = 0.0
+            self.coef_ = beta
+
+        return self

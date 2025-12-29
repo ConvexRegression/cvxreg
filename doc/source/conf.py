@@ -16,7 +16,7 @@ sys.path.insert(0, os.path.abspath('../..'))
 project = 'cvxreg'
 copyright = '2025, Zhiqiang Liao'
 author = 'Zhiqiang Liao'
-release = 'v0.0.8'
+release = 'v0.2.2'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

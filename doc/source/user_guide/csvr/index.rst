@@ -1,21 +1,23 @@
 ====================
-cvxreg.models.PCR
+cvxreg.models.CSVR
 ====================
 
 .. code:: python
 
-    cvxreg.models.PCR(*, c=1.0, shape='convex', monotonic=None, fit_intercept=True, solver='ecos')
+    cvxreg.models.CSVR(*, c=1.0, epsilon=0.1, shape='convex', monotonic=None, fit_intercept=True, solver='ecos')
 
-Penalized Convex Regression (PCR) model.
-----------------------------------------
+Convex Support Vector Regression (CSVR) model.
+------------------------------------------------
 
-PCR fit a convex function with coefficients :math:`\boldsymbol{\xi}_1,\ldots,\boldsymbol{\xi}_n` from the data. :math:`\boldsymbol{\xi}_i` is d-dimensional vector and n is the number of observations.
+CSVR fit a convex function with coefficients :math:`\boldsymbol{\xi}_1,\ldots,\boldsymbol{\xi}_n` from the data. :math:`\boldsymbol{\xi}_i` is d-dimensional vector and n is the number of observations.
 The optimization problem is:
 
 .. math::
 
-    \min_{\boldsymbol{\xi}_1,\ldots,\boldsymbol{\xi}_n; \boldsymbol{\theta}} & \frac{1}{2}\sum_{i=1}^n (y_i-\theta_i)^2 + c * \sum_{i=1}^n \|\boldsymbol{\xi}_i\|_2^2 \\\\
-    s.t. & \theta_i + \boldsymbol{\xi}_i^T (\boldsymbol{x}_j - \boldsymbol{x}_i) \geq \theta_j,  i,j=1,\ldots,n
+    \min_{\boldsymbol{\xi}_1,\ldots,\boldsymbol{\xi}_n; \boldsymbol{\theta}, \pi, \pi^*} & \frac{1}{2}\sum_{i=1}^n \|\boldsymbol{\xi}_i\|_2^2 + c * \sum_{i=1}^n (\pi_i + \pi_i^*) \\\\
+    s.t. & y_i - \theta_i \leq \epsilon + \pi_i,  i=1,\ldots,n \\\\
+         & \theta_i - y_i \leq \epsilon + \pi_i^*,  i=1,\ldots,n \\\\
+         & \theta_i + \boldsymbol{\xi}_i^T (\boldsymbol{x}_j - \boldsymbol{x}_i) \geq \theta_j,  i,j=1,\ldots,n
 
 where :math:`\boldsymbol{x}_i` is the i-th observation, :math:`y_i` is the i-th target value, :math:`\theta_i` is the value of :math:`f(\boldsymbol{x}_i)`, 
 :math:`\boldsymbol{\xi}_i` is the coefficient at the i-th observation, and :math:`c` is the regularization parameter.
@@ -29,12 +31,15 @@ Parameters                Options
 :code:`c`                 Float, default: 1.0. c must be non-negative Float, i.e. in :math:`[0, inf)`.
 
                           The regularization parameter.
+:code:`epsilon`           Float, default: 0.1. epsilon must be non-negative Float, i.e. in :math:`[0, inf)`.
+
+                            The epsilon parameter in the epsilon-insensitive loss function.
 :code:`shape`             Selection: {:code:`convex`, :code:`concave`}, default: :code:`convex`
 
                           The shape of the function to be fitted.
 :code:`monotonic`         Selection: {:code:`increasing`, :code:`decreasing`}, default: None
 
-                          Whether to constrain the function to be monotonic.
+                          Whether to constrain the function monotonic.
 :code:`fit_intercept`     Boolean, default: True
 
                           Whether to fit the intercept.
@@ -64,17 +69,17 @@ Examples
 .. code:: python
 
     import numpy as np
-    from cvxreg.models import PCR
+    from cvxreg.models import CSVR
     X = np.array([[1, 1], [1, 2], [2, 2]])
     y = [1, 2, 3]
-    pcr = PCR()
-    pcr.fit(X, y)
-    print(pcr.coef_)
-    # [[-2.80851372e-06 -4.48428251e-06]
-    #   [ 2.02631940e-07  1.89185893e-01]
-    #   [ 3.51352926e-01  1.89185893e-01]]
-    print(pcr.intercept_)
-    # [1.75676572 1.56757233 1.21621961]
+    csvr = CSVR()
+    csvr.fit(X, y)
+    print(csvr.coef_)
+    # [[-2.72282908e-09 -9.16695789e-09]
+    #  [-4.73065053e-09  4.99999982e-01]
+    #  [ 9.99992687e-01  4.99999982e-01]]
+    print(csvr.intercept_)
+    # [ 1.40000369  0.9000037  -0.09998899]
 
 Methods
 -------

@@ -4,22 +4,21 @@ cvxreg.models.CR
 
 .. code:: python
 
-    cvxreg.models.CR(*, shape='convex', positive=False, fit_intercept=True, solver='ecos')
+    cvxreg.models.CR(*, shape='convex', monotonic=None, fit_intercept=True, solver='ecos')
 
 Convex regression (CR) model.
 -----------------------------
 
-CR fit a convex function with coefficients beta = (beta_1, ..., beta_n, where beta_i is d-dimensional vector and n is the number of samples) to the data. 
+CR fit a convex function with coefficients :math:`\boldsymbol{\xi}_1,\ldots,\boldsymbol{\xi}_n` from the data. :math:`\boldsymbol{\xi}_i` is d-dimensional vector and n is the number of samples. 
 The optimization problem is:
 
 .. math::
 
-    \min_{\beta, \alpha, \epsilon} & \sum_{i=1}^n \epsilon_i^2 \\\\
-    s.t. & y_i = \alpha_i + \beta_i * x_i + \epsilon_i \\\\
-         & \alpha_i + \beta_i * x_i \geq \alpha_j + \beta_j * x_i,  \forall j != i
+    \min_{\boldsymbol{\xi}_1,\ldots,\boldsymbol{\xi}_n; \boldsymbol{\theta}} & \frac{1}{2}\sum_{i=1}^n (y_i-\theta_i)^2 \\\\
+    s.t. & \theta_i + \boldsymbol{\xi}_i^T (\boldsymbol{x}_j-\boldsymbol{x}_i) \geq \theta_j,  i,j=1,\ldots,n
 
-where :math:`x_i` is the i-th sample, :math:`y_i` is the i-th target value, :math:`\alpha_i` is the intercept of the i-th sample, 
-:math:`\beta_i` is the coefficient of the i-th sample, :math:`\epsilon_i` is the error of the i-th sample.
+where :math:`\boldsymbol{x}_i` is the i-th observation, :math:`y_i` is the i-th target value, :math:`\theta_i` is the value of :math:`f(\boldsymbol{x}_i)`, 
+:math:`\boldsymbol{\xi}_i` is the coefficient at the i-th observation.
 
 Parameters
 ----------
@@ -30,9 +29,9 @@ Parameters              Options
 :code:`shape`           Selection: {:code:`convex`, :code:`concave`}, default: :code:`convex`
 
                         The shape of the function to be fitted.
-:code:`positive`        Boolean, default: False
+:code:`monotonic`       Selection: {:code:`increasing`, :code:`decreasing`}, default: None
 
-                        Whether to constrain the coefficients to be positive.
+                        Whether to constrain the function to be monotonic.
 :code:`fit_intercept`   Boolean, default: True
 
                         Whether to fit the intercept.

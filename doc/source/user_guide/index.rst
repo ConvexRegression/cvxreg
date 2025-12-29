@@ -4,7 +4,8 @@ User Guide
 
 
 .. toctree::
-    :maxdepth: 2
+    :maxdepth: 3
 
     cr/index
     pcr/index
+    csvr/index

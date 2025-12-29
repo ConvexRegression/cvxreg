@@ -14,9 +14,9 @@ sys.path.insert(0, os.path.abspath('../..'))
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'cvxreg'
-copyright = '2023, Zhiqiang Liao'
+copyright = '2025, Zhiqiang Liao'
 author = 'Zhiqiang Liao'
-release = 'v0.0.7'
+release = 'v0.0.8'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -31,7 +31,7 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
     'sphinx.ext.napoleon',
-    'sphinxcontrib.jquery',
+    # 'sphinxcontrib.jquery',
 ]
 
 # To suppress autodoc/numpydoc warning.
